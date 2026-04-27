@@ -1,0 +1,12 @@
+fastapi[standard]>=0.115
+uvicorn[standard]>=0.34
+asyncpg>=0.30
+python-telegram-bot[webhooks]>=21
+fastmcp>=3.0
+google-genai>=1.73
+groq>=1.1
+apscheduler>=3.10
+pydantic-settings>=2.7
+httpx>=0.28
+python-dotenv>=1.1
+tenacity>=9.0
