@@ -10,7 +10,11 @@ from app.bots.deluxeam import create_bot_am
 from app.bots.deluxecs import create_bot_cs
 from app.config import settings
 from app.db.pool import close_pool, init_pool
-from app.scheduler.jobs import finalizar_eventos_expirados, liberar_mesas_expiradas
+from app.scheduler.jobs import (
+    finalizar_eventos_expirados,
+    liberar_mesas_expiradas,
+    mantener_webhook_activo,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -29,6 +33,10 @@ def _is_scheduler_enabled() -> bool:
     return settings.ENABLE_BACKGROUND_SCHEDULER
 
 
+def _is_self_ping_enabled() -> bool:
+    return settings.ENABLE_SELF_PING
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Inicializar DB
@@ -36,9 +44,12 @@ async def lifespan(app: FastAPI):
 
     # Inicializar Scheduler
     scheduler_started = False
-    if _is_scheduler_enabled():
-        scheduler.add_job(finalizar_eventos_expirados, "interval", minutes=5)
-        scheduler.add_job(liberar_mesas_expiradas, "interval", minutes=10)
+    if _is_scheduler_enabled() or _is_self_ping_enabled():
+        if _is_scheduler_enabled():
+            scheduler.add_job(finalizar_eventos_expirados, "interval", minutes=5)
+            scheduler.add_job(liberar_mesas_expiradas, "interval", minutes=10)
+        if _is_self_ping_enabled():
+            scheduler.add_job(mantener_webhook_activo, "interval", minutes=14)
         scheduler.start()
         scheduler_started = True
 

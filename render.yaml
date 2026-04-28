@@ -21,6 +21,8 @@ services:
         sync: false
       - key: ENABLE_BACKGROUND_SCHEDULER
         value: "false"
+      - key: ENABLE_SELF_PING
+        value: "true"
 
   - type: cron
     name: deluxe-v2-finalizar-eventos

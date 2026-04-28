@@ -1,4 +1,8 @@
 import logging
+
+import httpx
+
+from app.config import settings
 from app.db.pool import get_connection
 
 logger = logging.getLogger(__name__)
@@ -41,3 +45,15 @@ async def liberar_mesas_expiradas():
                 """)
     except Exception as e:
         logger.error(f"Error freeing expired tables: {e}")
+
+
+async def mantener_webhook_activo():
+    """Hace autoping al servicio web para intentar mantenerlo activo."""
+    target_url = f"{settings.WEBHOOK_BASE_URL.rstrip('/')}/health"
+    try:
+        async with httpx.AsyncClient(timeout=20.0, follow_redirects=True) as client:
+            response = await client.get(target_url)
+            response.raise_for_status()
+        logger.info("Self-ping OK hacia %s con status %s", target_url, response.status_code)
+    except Exception as e:
+        logger.error(f"Error en self-ping hacia {target_url}: {e}")
