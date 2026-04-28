@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: deluxe-v2-web
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN_CS
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN_AM
+        sync: false
+      - key: WEBHOOK_BASE_URL
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: ENABLE_BACKGROUND_SCHEDULER
+        value: "false"
+
+  - type: cron
+    name: deluxe-v2-finalizar-eventos
+    runtime: python
+    plan: starter
+    schedule: "*/5 * * * *"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m app.run_job finalizar_eventos_expirados
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+
+  - type: cron
+    name: deluxe-v2-liberar-mesas
+    runtime: python
+    plan: starter
+    schedule: "*/10 * * * *"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m app.run_job liberar_mesas_expiradas
+    envVars:
+      - key: DATABASE_URL
+        sync: false
