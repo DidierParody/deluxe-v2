@@ -45,11 +45,11 @@ class GroqClient(LLMClient):
                     m["tool_calls"] = []
                     for tc in msg["tool_calls"]:
                         m["tool_calls"].append({
-                            "id": tc.id or f"call_{tc.name}",
+                            "id": self._tool_call_value(tc, "id") or f"call_{self._tool_call_value(tc, 'name', 'tool')}",
                             "type": "function",
                             "function": {
-                                "name": tc.name,
-                                "arguments": json.dumps(tc.arguments)
+                                "name": self._tool_call_value(tc, "name"),
+                                "arguments": json.dumps(self._tool_call_value(tc, "arguments", {}))
                             }
                         })
                 groq_messages.append(m)
@@ -82,3 +82,8 @@ class GroqClient(LLMClient):
             return LLMResponse(tool_calls=tool_calls)
             
         return LLMResponse(text=message.content)
+
+    def _tool_call_value(self, tool_call: Any, key: str, default: Any = None) -> Any:
+        if isinstance(tool_call, dict):
+            return tool_call.get(key, default)
+        return getattr(tool_call, key, default)

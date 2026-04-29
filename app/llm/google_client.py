@@ -61,8 +61,8 @@ class GoogleClient(LLMClient):
                     parts = []
                     for tc in msg["tool_calls"]:
                         parts.append(types.Part.from_function_call(
-                            name=tc.name,
-                            args=tc.arguments
+                            name=self._tool_call_value(tc, "name"),
+                            args=self._tool_call_value(tc, "arguments", {})
                         ))
                     contents.append(types.Content(role="model", parts=parts))
                 elif msg.get("content"):
@@ -102,3 +102,8 @@ class GoogleClient(LLMClient):
             return LLMResponse(tool_calls=tool_calls)
         
         return LLMResponse(text=response.text)
+
+    def _tool_call_value(self, tool_call: Any, key: str, default: Any = None) -> Any:
+        if isinstance(tool_call, dict):
+            return tool_call.get(key, default)
+        return getattr(tool_call, key, default)

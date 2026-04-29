@@ -8,6 +8,7 @@ from fastapi import FastAPI, Request, Response
 import app.bot_registry as bot_registry
 from app.bots.deluxeam import create_bot_am
 from app.bots.deluxecs import create_bot_cs
+from app.cache.redis_client import close_redis, init_redis
 from app.config import settings
 from app.db.pool import close_pool, init_pool
 from app.scheduler.jobs import (
@@ -41,6 +42,7 @@ def _is_self_ping_enabled() -> bool:
 async def lifespan(app: FastAPI):
     # Inicializar DB
     await init_pool()
+    await init_redis()
 
     # Inicializar Scheduler
     scheduler_started = False
@@ -87,6 +89,7 @@ async def lifespan(app: FastAPI):
         await bot_am_app.shutdown()
     except Exception as e:
         logger.warning(f"AM bot shutdown fallo: {e}")
+    await close_redis()
     await close_pool()
 
 
@@ -95,7 +98,12 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ok", "scheduler_enabled": _is_scheduler_enabled()}
+    return {
+        "status": "ok",
+        "scheduler_enabled": _is_scheduler_enabled(),
+        "redis_configured": bool(settings.REDIS_URL),
+        "memory_enabled": settings.REDIS_MEMORY_ENABLED,
+    }
 
 
 @app.post("/webhook/deluxecs")
