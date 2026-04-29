@@ -49,7 +49,7 @@ async def lifespan(app: FastAPI):
             scheduler.add_job(finalizar_eventos_expirados, "interval", minutes=5)
             scheduler.add_job(liberar_mesas_expiradas, "interval", minutes=10)
         if _is_self_ping_enabled():
-            scheduler.add_job(mantener_webhook_activo, "interval", minutes=14)
+            scheduler.add_job(mantener_webhook_activo, "interval", minutes=10)
         scheduler.start()
         scheduler_started = True
 
