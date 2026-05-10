@@ -141,11 +141,13 @@ async def reservar_mesa(telegram_id: int, nombre_evento: str, numero_mesa: int) 
                     order["id"],
                     cost,
                 )
-                return _json({
-                    "status": "success",
-                    "message": f"Mesa {numero_mesa} reservada. Orden ID: {order['id']}. Envía tu comprobante de pago.",
-                    "order_id": order["id"],
-                })
+                return _json(
+                    {
+                        "status": "success",
+                        "message": f"Mesa {numero_mesa} reservada. Orden ID: {order['id']}. Envía tu comprobante de pago.",
+                        "order_id": order["id"],
+                    }
+                )
     except Exception as exc:
         logger.error(f"reservar_mesa error: {exc}")
         return _json({"error": str(exc)})
@@ -173,10 +175,12 @@ async def cancelar_mi_reserva(telegram_id: int, numero_mesa: int) -> str:
                     numero_mesa,
                 )
                 if not res:
-                    return _json({
-                        "status": "error",
-                        "message": "No se encontró una reserva activa para esta mesa.",
-                    })
+                    return _json(
+                        {
+                            "status": "error",
+                            "message": "No se encontró una reserva activa para esta mesa.",
+                        }
+                    )
 
                 await conn.execute(
                     "UPDATE transactions.reservations SET reservation_state_id = "

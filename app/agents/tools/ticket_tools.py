@@ -105,10 +105,12 @@ async def comprar_tickets(
 
                 disponibles = tt["disponibles"] or 0
                 if disponibles < cantidad:
-                    return _json({
-                        "status": "error",
-                        "message": f"Solo quedan {disponibles} tickets disponibles.",
-                    })
+                    return _json(
+                        {
+                            "status": "error",
+                            "message": f"Solo quedan {disponibles} tickets disponibles.",
+                        }
+                    )
 
                 order = await conn.fetchrow(
                     "INSERT INTO transactions.orders (user_id, total, status) VALUES ($1, 0, 'pending') RETURNING id",
@@ -150,11 +152,13 @@ async def comprar_tickets(
                     """,
                     order_id,
                 )
-                return _json({
-                    "status": "success",
-                    "message": f"Reserva exitosa. Orden ID: {order_id}. Por favor envía comprobante de pago.",
-                    "order_id": order_id,
-                })
+                return _json(
+                    {
+                        "status": "success",
+                        "message": f"Reserva exitosa. Orden ID: {order_id}. Por favor envía comprobante de pago.",
+                        "order_id": order_id,
+                    }
+                )
     except Exception as exc:
         logger.error(f"comprar_tickets error: {exc}")
         return _json({"error": str(exc)})
