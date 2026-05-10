@@ -14,7 +14,7 @@ ALLOWED_SESSION_KEYS = {
 }
 
 FLOW_KEYWORDS = {
-    "reservation": ("reserva", "mesa", "vip", "regular", "evento"),
+    "reservation": ("reserva", "mesa", "regular"),
     "tickets": ("ticket", "tickets", "boleta", "boletas", "entrada", "entradas"),
     "payment": ("pago", "pagar", "comprobante", "transferencia"),
     "admin": ("aprobar", "gestionar", "crear evento", "cerrar evento"),
