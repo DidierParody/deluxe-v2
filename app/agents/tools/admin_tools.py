@@ -21,7 +21,9 @@ async def admin_crear_evento(nombre: str, descripcion: str, start_time: str, end
         dt_start = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
         dt_end = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
     except ValueError:
-        return _json({"status": "error", "message": "Formato de fecha inválido. Usa YYYY-MM-DD HH:MM:SS."})
+        return _json(
+            {"status": "error", "message": "Formato de fecha inválido. Usa YYYY-MM-DD HH:MM:SS."}
+        )
 
     try:
         async with get_connection() as conn:
@@ -106,10 +108,12 @@ async def admin_cancelar_evento(nombre_evento: str) -> str:
                     "(SELECT id FROM catalog.event_states WHERE name = 'cancelled') WHERE id = $1",
                     evt["id"],
                 )
-                return _json({
-                    "status": "success",
-                    "message": "Evento y sus reservas cancelados exitosamente.",
-                })
+                return _json(
+                    {
+                        "status": "success",
+                        "message": "Evento y sus reservas cancelados exitosamente.",
+                    }
+                )
     except Exception as exc:
         logger.error(f"admin_cancelar_evento error: {exc}")
         return _json({"error": str(exc)})
@@ -126,7 +130,9 @@ async def admin_aprobar_orden(order_id: int) -> str:
                     order_id,
                 )
                 if not order:
-                    return _json({"status": "error", "message": "Orden no encontrada o ya procesada."})
+                    return _json(
+                        {"status": "error", "message": "Orden no encontrada o ya procesada."}
+                    )
 
                 await conn.execute(
                     """
@@ -154,7 +160,9 @@ async def admin_aprobar_orden(order_id: int) -> str:
                     "UPDATE transactions.orders SET status = 'approved', updated_at = CURRENT_TIMESTAMP WHERE id = $1",
                     order_id,
                 )
-                return _json({"status": "success", "message": f"Orden {order_id} aprobada exitosamente."})
+                return _json(
+                    {"status": "success", "message": f"Orden {order_id} aprobada exitosamente."}
+                )
     except Exception as exc:
         logger.error(f"admin_aprobar_orden error: {exc}")
         return _json({"error": str(exc)})
@@ -194,50 +202,50 @@ async def admin_crear_lote_mesas(
     """
     try:
         async with get_connection() as conn, conn.transaction():
+            tt = await conn.fetchrow(
+                "SELECT id FROM catalog.table_types WHERE name ILIKE $1", nombre_tipo
+            )
+            if not tt:
                 tt = await conn.fetchrow(
-                    "SELECT id FROM catalog.table_types WHERE name ILIKE $1", nombre_tipo
+                    "INSERT INTO catalog.table_types (name) VALUES ($1) RETURNING id",
+                    nombre_tipo.lower(),
                 )
-                if not tt:
-                    tt = await conn.fetchrow(
-                        "INSERT INTO catalog.table_types (name) VALUES ($1) RETURNING id",
-                        nombre_tipo.lower(),
-                    )
-                tt_id = tt["id"]
+            tt_id = tt["id"]
 
-                max_row = await conn.fetchrow("SELECT MAX(number) AS max_num FROM core.dico_tables")
-                start_num = (max_row["max_num"] or 0) + 1
+            max_row = await conn.fetchrow("SELECT MAX(number) AS max_num FROM core.dico_tables")
+            start_num = (max_row["max_num"] or 0) + 1
 
-                mesas_creadas = []
-                for i in range(cantidad):
-                    t = await conn.fetchrow(
-                        """
+            mesas_creadas = []
+            for i in range(cantidad):
+                t = await conn.fetchrow(
+                    """
                         INSERT INTO core.dico_tables (number, table_type_id, capacity, table_state_id)
                         VALUES ($1, $2, $3, (SELECT id FROM catalog.table_states WHERE name = 'available'))
                         RETURNING id
                         """,
-                        start_num + i,
-                        tt_id,
-                        capacidad,
-                    )
-                    mesas_creadas.append(t["id"])
+                    start_num + i,
+                    tt_id,
+                    capacidad,
+                )
+                mesas_creadas.append(t["id"])
 
-                if precio_opcional is not None and nombre_evento_opcional:
-                    evt = await conn.fetchrow(
-                        "SELECT id FROM core.events WHERE name ILIKE $1 LIMIT 1",
-                        f"%{nombre_evento_opcional}%",
-                    )
-                    if evt:
-                        for m_id in mesas_creadas:
-                            await conn.execute(
-                                """
+            if precio_opcional is not None and nombre_evento_opcional:
+                evt = await conn.fetchrow(
+                    "SELECT id FROM core.events WHERE name ILIKE $1 LIMIT 1",
+                    f"%{nombre_evento_opcional}%",
+                )
+                if evt:
+                    for m_id in mesas_creadas:
+                        await conn.execute(
+                            """
                                 INSERT INTO core.table_prices (table_id, event_id, price)
                                 VALUES ($1, $2, $3)
                                 ON CONFLICT (table_id, event_id) DO UPDATE SET price = EXCLUDED.price
                                 """,
-                                m_id,
-                                evt["id"],
-                                precio_opcional,
-                            )
+                            m_id,
+                            evt["id"],
+                            precio_opcional,
+                        )
 
         msg = (
             f"Se crearon {cantidad} mesas tipo '{nombre_tipo}' con capacidad {capacidad} "
@@ -262,7 +270,9 @@ async def admin_configurar_precio_mesa(nombre_evento: str, numero_mesa: int, pre
             if not evt:
                 return _json({"status": "error", "message": "Evento no encontrado."})
 
-            mesa = await conn.fetchrow("SELECT id FROM core.dico_tables WHERE number = $1", numero_mesa)
+            mesa = await conn.fetchrow(
+                "SELECT id FROM core.dico_tables WHERE number = $1", numero_mesa
+            )
             if not mesa:
                 return _json({"status": "error", "message": "Mesa no encontrada."})
 
@@ -276,10 +286,12 @@ async def admin_configurar_precio_mesa(nombre_evento: str, numero_mesa: int, pre
                 evt["id"],
                 precio,
             )
-            return _json({
-                "status": "success",
-                "message": f"Precio ${precio} configurado para mesa {numero_mesa} en '{nombre_evento}'.",
-            })
+            return _json(
+                {
+                    "status": "success",
+                    "message": f"Precio ${precio} configurado para mesa {numero_mesa} en '{nombre_evento}'.",
+                }
+            )
     except Exception as exc:
         logger.error(f"admin_configurar_precio_mesa error: {exc}")
         return _json({"error": str(exc)})
@@ -305,10 +317,12 @@ async def admin_crear_tickets_evento(
                 cantidad,
                 precio,
             )
-            return _json({
-                "status": "success",
-                "message": f"{cantidad} tickets '{nombre_ticket}' a ${precio} creados para '{nombre_evento}'.",
-            })
+            return _json(
+                {
+                    "status": "success",
+                    "message": f"{cantidad} tickets '{nombre_ticket}' a ${precio} creados para '{nombre_evento}'.",
+                }
+            )
     except Exception as exc:
         logger.error(f"admin_crear_tickets_evento error: {exc}")
         return _json({"error": str(exc)})
