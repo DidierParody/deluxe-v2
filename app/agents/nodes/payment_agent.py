@@ -15,7 +15,7 @@ _llm = ChatNVIDIA(
     [ChatNVIDIA(model=settings.NVIDIA_MODEL_FALLBACK, api_key=settings.NVIDIA_API_KEY)]
 )
 
-_agent = create_react_agent(_llm, tools=_TOOLS, max_iterations=3)
+_agent = create_react_agent(_llm, tools=_TOOLS)
 
 
 async def payment_agent_node(state: DeluxeState) -> dict:
