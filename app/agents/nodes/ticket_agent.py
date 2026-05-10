@@ -1,3 +1,4 @@
+from langchain_core.messages import SystemMessage
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
 from langgraph.prebuilt import create_react_agent
 
@@ -22,8 +23,7 @@ _agent = create_react_agent(_llm, tools=_TOOLS)
 
 async def ticket_agent_node(state: DeluxeState) -> dict:
     system_prompt = get_system_prompt(state["role"], state["telegram_id"])
-    result = await _agent.ainvoke(
-        {"messages": state["messages"]},
-        config={"configurable": {"system_message": system_prompt}},
-    )
-    return {"messages": result["messages"]}
+    input_messages = [SystemMessage(content=system_prompt)] + list(state["messages"])
+    result = await _agent.ainvoke({"messages": input_messages})
+    new_messages = result["messages"][len(input_messages) :]
+    return {"messages": new_messages}
