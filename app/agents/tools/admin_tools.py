@@ -193,8 +193,7 @@ async def admin_crear_lote_mesas(
     Si precio_opcional y nombre_evento_opcional se envían, asigna precio a todas las mesas para ese evento.
     """
     try:
-        async with get_connection() as conn:
-            async with conn.transaction():
+        async with get_connection() as conn, conn.transaction():
                 tt = await conn.fetchrow(
                     "SELECT id FROM catalog.table_types WHERE name ILIKE $1", nombre_tipo
                 )
