@@ -161,21 +161,23 @@ async def handle_reaction(update: Update, context: ContextTypes.DEFAULT_TYPE):
             logger.warning(f"Reacción 👍 ignorada: {reactor_id} no es admin.")
             return
 
-        # Buscar la orden por (message_id enviado a este admin específico)
-        msg_record = await conn.fetchrow("""
-            SELECT order_id FROM system.admin_payment_msgs
-            WHERE admin_telegram_id = $1 AND message_id = $2
-        """, reactor_id, message_id)
-
-        if not msg_record:
-            logger.warning(
-                f"No se encontró orden para admin {reactor_id} / msg {message_id}."
-            )
-            return
-
-        order_id = msg_record['order_id']
-
+        order_id = None
         async with conn.transaction():
+            # Fetch and lock the tracking record inside the transaction to prevent
+            # two admins from concurrently triggering approval for the same order.
+            msg_record = await conn.fetchrow(
+                """
+                SELECT order_id FROM system.admin_payment_msgs
+                WHERE admin_telegram_id = $1 AND message_id = $2
+                FOR UPDATE
+                """,
+                reactor_id, message_id,
+            )
+            if not msg_record:
+                logger.warning(f"No order found for admin {reactor_id} / msg {message_id}.")
+                return
+
+            order_id = msg_record["order_id"]
             # Verificar que la orden siga pendiente (evitar doble aprobación)
             order = await conn.fetchrow(
                 "SELECT id, user_id FROM transactions.orders WHERE id = $1 AND status = 'pending' FOR UPDATE",
