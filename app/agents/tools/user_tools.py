@@ -1,3 +1,4 @@
+import json
 import logging
 
 from langchain_core.tools import tool
@@ -7,8 +8,13 @@ from app.db.pool import get_connection
 logger = logging.getLogger(__name__)
 
 
+def _json(obj) -> str:
+    """Serialize to JSON string; converts non-serializable types (datetime, Decimal…) via str()."""
+    return json.dumps(obj, default=str, ensure_ascii=False)
+
+
 @tool
-async def registrar_usuario(telegram_id: int, username: str, email: str, phone_number: str) -> dict:
+async def registrar_usuario(telegram_id: int, username: str, email: str, phone_number: str) -> str:
     """Registra o actualiza un usuario en el sistema."""
     try:
         async with get_connection() as conn:
@@ -29,7 +35,7 @@ async def registrar_usuario(telegram_id: int, username: str, email: str, phone_n
                 phone_number,
                 telegram_id,
             )
-            return {"status": "success", "user": dict(row)}
+            return _json({"status": "success", "user": dict(row)})
     except Exception as exc:
         logger.error(f"registrar_usuario error: {exc}")
-        return {"status": "error", "message": str(exc)}
+        return _json({"status": "error", "message": str(exc)})
