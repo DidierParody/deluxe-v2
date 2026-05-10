@@ -73,10 +73,6 @@ async def lifespan(app: FastAPI):
 
     for bot_app, name in [(bot_cs_app, "CS"), (bot_am_app, "AM")]:
         try:
-            await bot_app.bot.delete_webhook()
-        except Exception as exc:
-            logger.warning(f"{name} delete_webhook failed (ignored): {exc}")
-        try:
             await bot_app.shutdown()
         except Exception as exc:
             logger.warning(f"{name} shutdown failed: {exc}")
