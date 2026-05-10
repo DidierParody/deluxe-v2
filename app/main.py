@@ -46,18 +46,25 @@ async def lifespan(app: FastAPI):
         app.state.scheduler = scheduler
 
     await bot_cs_app.initialize()
-    await bot_cs_app.bot.set_webhook(
-        url=f"{settings.WEBHOOK_BASE_URL}/webhook/deluxecs",
-        allowed_updates=["message", "callback_query"],
-        secret_token=settings.WEBHOOK_SECRET_TOKEN or None,
-    )
-
     await bot_am_app.initialize()
-    await bot_am_app.bot.set_webhook(
-        url=f"{settings.WEBHOOK_BASE_URL}/webhook/deluxeam",
-        allowed_updates=["message", "callback_query", "message_reaction"],
-        secret_token=settings.WEBHOOK_SECRET_TOKEN or None,
-    )
+
+    if settings.WEBHOOK_BASE_URL.startswith("https://"):
+        await bot_cs_app.bot.set_webhook(
+            url=f"{settings.WEBHOOK_BASE_URL}/webhook/deluxecs",
+            allowed_updates=["message", "callback_query"],
+            secret_token=settings.WEBHOOK_SECRET_TOKEN or None,
+        )
+        await bot_am_app.bot.set_webhook(
+            url=f"{settings.WEBHOOK_BASE_URL}/webhook/deluxeam",
+            allowed_updates=["message", "callback_query", "message_reaction"],
+            secret_token=settings.WEBHOOK_SECRET_TOKEN or None,
+        )
+        logger.info("Telegram webhooks registered successfully.")
+    else:
+        logger.warning(
+            "WEBHOOK_BASE_URL is not HTTPS — skipping automatic webhook registration. "
+            "Register webhooks manually once HTTPS is configured."
+        )
 
     yield
 
