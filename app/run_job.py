@@ -4,7 +4,6 @@ import sys
 from app.db.pool import close_pool, init_pool
 from app.scheduler.jobs import finalizar_eventos_expirados, liberar_mesas_expiradas
 
-
 JOBS = {
     "finalizar_eventos_expirados": finalizar_eventos_expirados,
     "liberar_mesas_expiradas": liberar_mesas_expiradas,

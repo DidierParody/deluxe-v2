@@ -19,8 +19,26 @@ services:
         sync: false
       - key: GROQ_API_KEY
         sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_TOKEN
+        sync: false
       - key: ENABLE_BACKGROUND_SCHEDULER
         value: "false"
+      - key: ENABLE_SELF_PING
+        value: "true"
+      - key: REDIS_MEMORY_ENABLED
+        value: "true"
+      - key: REDIS_MEMORY_TTL_CUSTOMER_MINUTES
+        value: "360"
+      - key: REDIS_MEMORY_TTL_ADMIN_MINUTES
+        value: "30"
+      - key: REDIS_IDEMPOTENCY_TTL_MINUTES
+        value: "30"
+      - key: REDIS_HISTORY_MAX_MESSAGES
+        value: "24"
 
   - type: cron
     name: deluxe-v2-finalizar-eventos

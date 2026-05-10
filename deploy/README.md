@@ -27,10 +27,21 @@ Esta separacion evita depender de un scheduler embebido dentro del proceso web e
 - `GOOGLE_API_KEY`
 - `GROQ_API_KEY`
 - `ENABLE_BACKGROUND_SCHEDULER=false`
+- `ENABLE_SELF_PING=true`
 
 ## Variables de entorno de los cron jobs
 
 - `DATABASE_URL`
+
+## Keepalive interno para Render Free
+
+Si el servicio web corre en una instancia que puede dormirse por inactividad, el
+job interno `mantener_webhook_activo` hace una solicitud `GET` a:
+
+- `WEBHOOK_BASE_URL/health`
+
+La frecuencia propuesta es cada 14 minutos y se activa con
+`ENABLE_SELF_PING=true`.
 
 ## Nota importante
 

@@ -1,0 +1,101 @@
+name: Deploy to AWS ECS
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  id-token: write   # Required for OIDC authentication
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: deluxe-v2
+  ECS_CLUSTER: deluxe-v2-cluster
+  ECS_SERVICE: deluxe-v2-web
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: ruff check app/ tests/
+      - run: ruff format --check app/ tests/
+      - name: Unit tests
+        env:
+          DATABASE_URL: "postgresql://fake"
+          TELEGRAM_BOT_TOKEN_CS: "fake"
+          TELEGRAM_BOT_TOKEN_AM: "fake"
+          WEBHOOK_BASE_URL: "https://fake.example.com"
+          NVIDIA_API_KEY: "fake"
+          REDIS_MEMORY_ENABLED: "false"
+        run: pytest tests/unit/ --tb=short -q
+
+  deploy:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_CI_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push web image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -f docker/Dockerfile \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+            .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Build and push cron image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -f docker/Dockerfile.cron \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:cron-$IMAGE_TAG \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:cron-latest \
+            .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:cron-$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:cron-latest
+
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service \
+            --cluster $ECS_CLUSTER \
+            --service $ECS_SERVICE \
+            --force-new-deployment \
+            --region $AWS_REGION
+
+      - name: Wait for deployment to stabilize
+        run: |
+          aws ecs wait services-stable \
+            --cluster $ECS_CLUSTER \
+            --services $ECS_SERVICE \
+            --region $AWS_REGION
+
+      - name: Smoke test
+        run: |
+          ALB_DNS=$(aws elbv2 describe-load-balancers \
+            --names deluxe-v2-alb \
+            --query 'LoadBalancers[0].DNSName' \
+            --output text)
+          curl -f --max-time 10 http://$ALB_DNS/health
