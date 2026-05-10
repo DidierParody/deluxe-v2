@@ -27,7 +27,7 @@ _llm = ChatNVIDIA(
     [ChatNVIDIA(model=settings.NVIDIA_MODEL_FALLBACK, api_key=settings.NVIDIA_API_KEY)]
 )
 
-_agent = create_react_agent(_llm, tools=_TOOLS, max_iterations=5)
+_agent = create_react_agent(_llm, tools=_TOOLS)
 
 
 async def reservation_agent_node(state: DeluxeState) -> dict:

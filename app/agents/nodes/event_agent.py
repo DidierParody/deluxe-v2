@@ -17,7 +17,7 @@ _llm = ChatNVIDIA(
 )
 
 # Stateless agent — no checkpointer, read-only tools
-_agent = create_react_agent(_llm, tools=_TOOLS, max_iterations=5)
+_agent = create_react_agent(_llm, tools=_TOOLS)
 
 
 async def event_agent_node(state: DeluxeState) -> dict:
