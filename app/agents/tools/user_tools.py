@@ -14,8 +14,13 @@ def _json(obj) -> str:
 
 
 @tool
-async def registrar_usuario(telegram_id: int, username: str, email: str, phone_number: str) -> str:
-    """Registra o actualiza un usuario en el sistema."""
+async def registrar_usuario(
+    telegram_id: int,
+    username: str,
+    email: str | None = None,
+    phone_number: str | None = None,
+) -> str:
+    """Registra o actualiza un usuario en el sistema. email y phone_number son opcionales; nunca los inventes."""
     try:
         async with get_connection() as conn:
             row = await conn.fetchrow(
@@ -27,7 +32,10 @@ async def registrar_usuario(telegram_id: int, username: str, email: str, phone_n
                     $2, $3, $4
                 )
                 ON CONFLICT (telegram_id) DO UPDATE
-                    SET username = EXCLUDED.username, updated_at = CURRENT_TIMESTAMP
+                    SET username = EXCLUDED.username,
+                        email = COALESCE(EXCLUDED.email, core.users.email),
+                        phone_number = COALESCE(EXCLUDED.phone_number, core.users.phone_number),
+                        updated_at = CURRENT_TIMESTAMP
                 RETURNING id, username, email
                 """,
                 username,

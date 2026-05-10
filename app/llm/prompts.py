@@ -17,6 +17,12 @@ IMPORTANTE:
 - Para fechas y horas, formatealo en tus respuestas en texto facil de leer (e.g. 'Hoy a las 10 PM').
 """
 
+    base_prompt += (
+        "\n- REGISTRO DE USUARIO: Solo llama a registrar_usuario cuando el usuario te haya dado "
+        "explicitamente su email o telefono, O cuando necesite hacer una reserva/compra. "
+        "Nunca inventes datos de contacto. Puedes registrar sin email si el usuario no lo proporcionó.\n"
+    )
+
     if role == "admin":
         return base_prompt + (
             f"\n[SISTEMA]: Estas hablando con un ADMIN. "
