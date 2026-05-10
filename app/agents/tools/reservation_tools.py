@@ -1,5 +1,7 @@
 import logging
+
 from langchain_core.tools import tool
+
 from app.db.pool import get_connection
 
 logger = logging.getLogger(__name__)
@@ -30,7 +32,8 @@ async def ver_mesas_disponibles(nombre_evento: str, tipo_mesa: str = None) -> li
                 WHERE tt.name ILIKE $2 AND ts.name = 'available'
                 ORDER BY dt.number
                 """,
-                evt["id"], f"%{tipo_mesa}%",
+                evt["id"],
+                f"%{tipo_mesa}%",
             )
         else:
             rows = await conn.fetch(
@@ -51,7 +54,7 @@ async def ver_mesas_disponibles(nombre_evento: str, tipo_mesa: str = None) -> li
 @tool
 async def reservar_mesa(telegram_id: int, nombre_evento: str, numero_mesa: int) -> dict:
     """Reserva una mesa específica para un evento y crea la orden de pago correspondiente."""
-    async with get_connection() as conn:
+    async with get_connection() as conn:  # noqa: SIM117
         async with conn.transaction():
             user = await conn.fetchrow(
                 "SELECT id FROM core.users WHERE telegram_id = $1", telegram_id
@@ -80,7 +83,8 @@ async def reservar_mesa(telegram_id: int, nombre_evento: str, numero_mesa: int) 
 
             precio = await conn.fetchrow(
                 "SELECT price FROM core.table_prices WHERE table_id = $1 AND event_id = $2",
-                mesa["id"], evt["id"],
+                mesa["id"],
+                evt["id"],
             )
             cost = precio["price"] if precio else 0
 
@@ -97,7 +101,9 @@ async def reservar_mesa(telegram_id: int, nombre_evento: str, numero_mesa: int) 
                     END
                 ) RETURNING id
                 """,
-                user["id"], mesa["id"], evt["id"],
+                user["id"],
+                mesa["id"],
+                evt["id"],
             )
             await conn.execute(
                 "UPDATE core.dico_tables SET table_state_id = "
@@ -114,11 +120,15 @@ async def reservar_mesa(telegram_id: int, nombre_evento: str, numero_mesa: int) 
                     (order_id, reservation_id, table_id, quantity, unit_price, discount)
                 VALUES ($1, $2, $3, 1, $4, 0)
                 """,
-                order["id"], res["id"], mesa["id"], cost,
+                order["id"],
+                res["id"],
+                mesa["id"],
+                cost,
             )
             await conn.execute(
                 "UPDATE transactions.orders SET total = $2 WHERE id = $1",
-                order["id"], cost,
+                order["id"],
+                cost,
             )
             return {
                 "status": "success",
@@ -130,7 +140,7 @@ async def reservar_mesa(telegram_id: int, nombre_evento: str, numero_mesa: int) 
 @tool
 async def cancelar_mi_reserva(telegram_id: int, numero_mesa: int) -> dict:
     """Cancela una reserva activa del usuario para la mesa indicada."""
-    async with get_connection() as conn:
+    async with get_connection() as conn:  # noqa: SIM117
         async with conn.transaction():
             res = await conn.fetchrow(
                 """
@@ -144,10 +154,14 @@ async def cancelar_mi_reserva(telegram_id: int, numero_mesa: int) -> dict:
                   )
                 FOR UPDATE
                 """,
-                telegram_id, numero_mesa,
+                telegram_id,
+                numero_mesa,
             )
             if not res:
-                return {"status": "error", "message": "No se encontró una reserva activa para esta mesa."}
+                return {
+                    "status": "error",
+                    "message": "No se encontró una reserva activa para esta mesa.",
+                }
 
             await conn.execute(
                 "UPDATE transactions.reservations SET reservation_state_id = "

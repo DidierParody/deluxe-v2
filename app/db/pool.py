@@ -1,17 +1,20 @@
-import asyncpg
-from typing import Optional
-from contextlib import asynccontextmanager
 import logging
+from contextlib import asynccontextmanager
+
+import asyncpg
+
 from app.config import settings
 
 logger = logging.getLogger(__name__)
 
 # Global pool instance
-_pool: Optional[asyncpg.Pool] = None
+_pool: asyncpg.Pool | None = None
+
 
 async def init_pool(retries: int = 3, delay: float = 2.0):
     global _pool
     import asyncio
+
     if _pool is not None:
         return
     for attempt in range(1, retries + 1):
@@ -34,6 +37,7 @@ async def init_pool(retries: int = 3, delay: float = 2.0):
             else:
                 raise
 
+
 async def close_pool():
     global _pool
     if _pool is not None:
@@ -42,10 +46,11 @@ async def close_pool():
         _pool = None
         logger.info("Database pool closed.")
 
+
 @asynccontextmanager
 async def get_connection():
     if _pool is None:
         raise RuntimeError("Database pool is not initialized. Call init_pool() first.")
-    
+
     async with _pool.acquire() as conn:
         yield conn

@@ -2,7 +2,7 @@ import json
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, Dict, Optional
+from typing import Any
 
 from app.cache.redis_client import get_redis
 from app.config import settings
@@ -17,12 +17,12 @@ class CachedResponse:
 
 
 class IdempotencyStore:
-    def __init__(self, ttl_minutes: Optional[int] = None):
+    def __init__(self, ttl_minutes: int | None = None):
         configured_ttl = ttl_minutes or settings.REDIS_IDEMPOTENCY_TTL_MINUTES
-        self._cache: Dict[int, CachedResponse] = {}
+        self._cache: dict[int, CachedResponse] = {}
         self.ttl = timedelta(minutes=configured_ttl)
 
-    async def get(self, update_id: int) -> Optional[Any]:
+    async def get(self, update_id: int) -> Any | None:
         """Returns the cached response if it exists and hasn't expired."""
         redis = await get_redis()
         if redis is not None:
@@ -33,7 +33,9 @@ class IdempotencyStore:
                     await redis.expire(key, int(self.ttl.total_seconds()))
                     return json.loads(payload)
             except Exception as exc:
-                logger.warning(f"Fallo al leer idempotencia desde Redis. Se usa fallback local. Error: {exc}")
+                logger.warning(
+                    f"Fallo al leer idempotencia desde Redis. Se usa fallback local. Error: {exc}"
+                )
 
         self._cleanup()
         if update_id in self._cache:
@@ -52,20 +54,16 @@ class IdempotencyStore:
                 )
                 return
             except Exception as exc:
-                logger.warning(f"Fallo al escribir idempotencia en Redis. Se usa fallback local. Error: {exc}")
+                logger.warning(
+                    f"Fallo al escribir idempotencia en Redis. Se usa fallback local. Error: {exc}"
+                )
 
-        self._cache[update_id] = CachedResponse(
-            response=response,
-            created_at=datetime.now()
-        )
+        self._cache[update_id] = CachedResponse(response=response, created_at=datetime.now())
 
     def _cleanup(self):
         """Removes expired entries."""
         now = datetime.now()
-        expired_keys = [
-            k for k, v in self._cache.items()
-            if now - v.created_at > self.ttl
-        ]
+        expired_keys = [k for k, v in self._cache.items() if now - v.created_at > self.ttl]
         for k in expired_keys:
             del self._cache[k]
 

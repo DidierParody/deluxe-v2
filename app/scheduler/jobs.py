@@ -1,4 +1,5 @@
 import logging
+
 from app.db.pool import get_connection
 
 logger = logging.getLogger(__name__)
@@ -23,7 +24,7 @@ async def finalizar_eventos_expirados():
 async def liberar_mesas_expiradas():
     """Releases tables whose reservations have expired and marks reservations as completed."""
     try:
-        async with get_connection() as conn:
+        async with get_connection() as conn:  # noqa: SIM117
             async with conn.transaction():
                 await conn.execute(
                     """

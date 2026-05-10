@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any, Optional, Protocol
+from typing import Any, Protocol
 
 import httpx
 from redis.asyncio import Redis
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class CacheClient(Protocol):
     async def ping(self) -> Any: ...
     async def get(self, key: str) -> Any: ...
-    async def set(self, key: str, value: Any, ex: Optional[int] = None) -> Any: ...
+    async def set(self, key: str, value: Any, ex: int | None = None) -> Any: ...
     async def expire(self, key: str, seconds: int) -> Any: ...
     async def delete(self, *keys: str) -> Any: ...
     async def lrange(self, key: str, start: int, end: int) -> Any: ...
@@ -37,7 +37,7 @@ class UpstashRestClient:
     async def get(self, key: str) -> Any:
         return await self._command("GET", key)
 
-    async def set(self, key: str, value: Any, ex: Optional[int] = None) -> Any:
+    async def set(self, key: str, value: Any, ex: int | None = None) -> Any:
         args = ["SET", key, value]
         if ex is not None:
             args.extend(["EX", ex])
@@ -80,10 +80,10 @@ class UpstashRestClient:
         return value
 
 
-_redis: Optional[CacheClient] = None
+_redis: CacheClient | None = None
 
 
-async def init_redis() -> Optional[CacheClient]:
+async def init_redis() -> CacheClient | None:
     global _redis
 
     if _redis is not None:
@@ -97,7 +97,9 @@ async def init_redis() -> Optional[CacheClient]:
         try:
             await client.ping()
         except Exception as exc:
-            logger.warning(f"No fue posible conectar con Upstash REST. Se usara fallback local. Error: {exc}")
+            logger.warning(
+                f"No fue posible conectar con Upstash REST. Se usara fallback local. Error: {exc}"
+            )
             await client.aclose()
             return None
 
@@ -106,7 +108,9 @@ async def init_redis() -> Optional[CacheClient]:
         return _redis
 
     if not settings.REDIS_URL:
-        logger.info("No hay REDIS_URL ni credenciales REST de Upstash. Se usara fallback local para memoria e idempotencia.")
+        logger.info(
+            "No hay REDIS_URL ni credenciales REST de Upstash. Se usara fallback local para memoria e idempotencia."
+        )
         return None
 
     client = Redis.from_url(
@@ -118,7 +122,9 @@ async def init_redis() -> Optional[CacheClient]:
     try:
         await client.ping()
     except Exception as exc:
-        logger.warning(f"No fue posible conectar con Redis TCP. Se usara fallback local. Error: {exc}")
+        logger.warning(
+            f"No fue posible conectar con Redis TCP. Se usara fallback local. Error: {exc}"
+        )
         await client.aclose()
         return None
 
@@ -127,7 +133,7 @@ async def init_redis() -> Optional[CacheClient]:
     return _redis
 
 
-async def get_redis() -> Optional[CacheClient]:
+async def get_redis() -> CacheClient | None:
     if _redis is None:
         return await init_redis()
     return _redis

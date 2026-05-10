@@ -1,5 +1,6 @@
 import logging
-from langchain_core.messages import HumanMessage, AIMessage
+
+from langchain_core.messages import AIMessage, HumanMessage
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -41,6 +42,7 @@ async def start_am(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("¡Bienvenido Admin Deluxe! ¿Qué deseas gestionar hoy?")
     else:
         from app.auth.pairing import generate_pairing_code
+
         code = await generate_pairing_code(telegram_id)
         await update.message.reply_text(
             f"⛔ Acceso denegado.\n\n"

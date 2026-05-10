@@ -1,17 +1,22 @@
 """
 Unit tests for the idempotency store (local in-memory fallback path).
 """
-import pytest
-from unittest.mock import patch, AsyncMock
 
-with patch.dict("os.environ", {
-    "DATABASE_URL": "postgresql://fake",
-    "TELEGRAM_BOT_TOKEN_CS": "fake",
-    "TELEGRAM_BOT_TOKEN_AM": "fake",
-    "WEBHOOK_BASE_URL": "https://fake.example.com",
-    "NVIDIA_API_KEY": "fake",
-    "REDIS_MEMORY_ENABLED": "false",
-}):
+from unittest.mock import patch
+
+import pytest
+
+with patch.dict(
+    "os.environ",
+    {
+        "DATABASE_URL": "postgresql://fake",
+        "TELEGRAM_BOT_TOKEN_CS": "fake",
+        "TELEGRAM_BOT_TOKEN_AM": "fake",
+        "WEBHOOK_BASE_URL": "https://fake.example.com",
+        "NVIDIA_API_KEY": "fake",
+        "REDIS_MEMORY_ENABLED": "false",
+    },
+):
     from app.idempotency.store import IdempotencyStore
 
 

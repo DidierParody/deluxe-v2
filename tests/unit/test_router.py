@@ -2,19 +2,23 @@
 Unit tests for the router node.
 No LLM or DB calls — pure Python logic.
 """
-import pytest
-from langchain_core.messages import HumanMessage
+
 from unittest.mock import patch
 
+from langchain_core.messages import HumanMessage
+
 # Patch settings before importing router so NVIDIA_API_KEY isn't required
-with patch.dict("os.environ", {
-    "DATABASE_URL": "postgresql://fake",
-    "TELEGRAM_BOT_TOKEN_CS": "fake",
-    "TELEGRAM_BOT_TOKEN_AM": "fake",
-    "WEBHOOK_BASE_URL": "https://fake.example.com",
-    "NVIDIA_API_KEY": "fake",
-}):
-    from app.agents.router import router_node, route_by_agent
+with patch.dict(
+    "os.environ",
+    {
+        "DATABASE_URL": "postgresql://fake",
+        "TELEGRAM_BOT_TOKEN_CS": "fake",
+        "TELEGRAM_BOT_TOKEN_AM": "fake",
+        "WEBHOOK_BASE_URL": "https://fake.example.com",
+        "NVIDIA_API_KEY": "fake",
+    },
+):
+    from app.agents.router import route_by_agent, router_node
 
 
 def _make_state(text: str, role: str = "customer", active_flow: str = None) -> dict:

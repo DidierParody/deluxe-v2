@@ -1,5 +1,7 @@
 import logging
+
 from langchain_core.tools import tool
+
 from app.db.pool import get_connection
 
 logger = logging.getLogger(__name__)
@@ -45,12 +47,14 @@ async def ver_tickets_disponibles(nombre_evento: str) -> list:
 
 
 @tool
-async def comprar_tickets(telegram_id: int, nombre_evento: str, tipo_ticket: str, cantidad: int) -> dict:
+async def comprar_tickets(
+    telegram_id: int, nombre_evento: str, tipo_ticket: str, cantidad: int
+) -> dict:
     """
     Compra uno o más tickets para un evento.
     Retorna el order_id que el usuario debe pagar enviando su comprobante.
     """
-    async with get_connection() as conn:
+    async with get_connection() as conn:  # noqa: SIM117
         async with conn.transaction():
             user = await conn.fetchrow(
                 "SELECT id FROM core.users WHERE telegram_id = $1", telegram_id
@@ -82,7 +86,8 @@ async def comprar_tickets(telegram_id: int, nombre_evento: str, tipo_ticket: str
                 WHERE event_id = $1 AND name ILIKE $2
                 FOR UPDATE
                 """,
-                evt["id"], f"%{tipo_ticket}%",
+                evt["id"],
+                f"%{tipo_ticket}%",
             )
             if not tt:
                 return {"status": "error", "message": "Tipo de ticket no encontrado."}
@@ -107,7 +112,8 @@ async def comprar_tickets(telegram_id: int, nombre_evento: str, tipo_ticket: str
                     VALUES ($1, $2, (SELECT id FROM catalog.ticket_states WHERE name = 'pending'))
                     RETURNING id
                     """,
-                    user["id"], tt["id"],
+                    user["id"],
+                    tt["id"],
                 )
                 await conn.execute(
                     """
@@ -115,7 +121,10 @@ async def comprar_tickets(telegram_id: int, nombre_evento: str, tipo_ticket: str
                         (order_id, ticket_id, type_ticket_id, quantity, unit_price, discount)
                     VALUES ($1, $2, $3, 1, $4, 0)
                     """,
-                    order_id, t["id"], tt["id"], tt["price"],
+                    order_id,
+                    t["id"],
+                    tt["id"],
+                    tt["price"],
                 )
 
             await conn.execute(

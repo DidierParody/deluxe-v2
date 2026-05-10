@@ -1,5 +1,7 @@
 import logging
+
 from langchain_core.tools import tool
+
 from app.db.pool import get_connection
 
 logger = logging.getLogger(__name__)
@@ -22,7 +24,10 @@ async def registrar_usuario(telegram_id: int, username: str, email: str, phone_n
                     SET username = EXCLUDED.username, updated_at = CURRENT_TIMESTAMP
                 RETURNING id, username, email
                 """,
-                username, email, phone_number, telegram_id,
+                username,
+                email,
+                phone_number,
+                telegram_id,
             )
             return {"status": "success", "user": dict(row)}
     except Exception as exc:

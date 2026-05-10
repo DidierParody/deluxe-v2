@@ -2,18 +2,20 @@
 Unit tests for ticket purchase race condition fix.
 Verifies that the SQL query merges the COUNT within the FOR UPDATE scope.
 """
-import re
+
 import inspect
-import pytest
 from unittest.mock import patch
 
-with patch.dict("os.environ", {
-    "DATABASE_URL": "postgresql://fake",
-    "TELEGRAM_BOT_TOKEN_CS": "fake",
-    "TELEGRAM_BOT_TOKEN_AM": "fake",
-    "WEBHOOK_BASE_URL": "https://fake.example.com",
-    "NVIDIA_API_KEY": "fake",
-}):
+with patch.dict(
+    "os.environ",
+    {
+        "DATABASE_URL": "postgresql://fake",
+        "TELEGRAM_BOT_TOKEN_CS": "fake",
+        "TELEGRAM_BOT_TOKEN_AM": "fake",
+        "WEBHOOK_BASE_URL": "https://fake.example.com",
+        "NVIDIA_API_KEY": "fake",
+    },
+):
     from app.agents.tools.ticket_tools import comprar_tickets
 
 
@@ -46,5 +48,6 @@ def test_comprar_tickets_uses_transaction():
 def test_ver_tickets_disponibles_filters_cancelled():
     """Available ticket count must exclude cancelled tickets."""
     from app.agents.tools.ticket_tools import ver_tickets_disponibles
+
     source = inspect.getsource(ver_tickets_disponibles.func)
     assert "cancelled" in source.lower(), "Query must exclude cancelled tickets from count"

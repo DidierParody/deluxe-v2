@@ -9,7 +9,7 @@ import app.bot_registry as bot_registry
 from app.agents.graph import compile_graph
 from app.bots.deluxeam import create_bot_am
 from app.bots.deluxecs import create_bot_cs
-from app.cache.redis_client import close_redis, get_redis, init_redis
+from app.cache.redis_client import close_redis, init_redis
 from app.config import settings
 from app.db.pool import close_pool, init_pool
 
@@ -36,6 +36,7 @@ async def lifespan(app: FastAPI):
 
     if settings.ENABLE_BACKGROUND_SCHEDULER:
         from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
         from app.scheduler.jobs import finalizar_eventos_expirados, liberar_mesas_expiradas
 
         scheduler = AsyncIOScheduler()

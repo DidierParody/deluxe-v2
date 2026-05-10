@@ -1,20 +1,21 @@
-from langgraph.prebuilt import create_react_agent
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
+from langgraph.prebuilt import create_react_agent
+
 from app.agents.state import DeluxeState
-from app.agents.tools.ticket_tools import ver_tickets_disponibles, comprar_tickets
 from app.agents.tools.event_tools import ver_eventos_disponibles
 from app.agents.tools.payment_tools import ver_metodos_de_pago
-from app.llm.prompts import get_system_prompt
+from app.agents.tools.ticket_tools import comprar_tickets, ver_tickets_disponibles
 from app.config import settings
+from app.llm.prompts import get_system_prompt
 
 _TOOLS = [ver_tickets_disponibles, comprar_tickets, ver_eventos_disponibles, ver_metodos_de_pago]
 
 _llm = ChatNVIDIA(
     model=settings.NVIDIA_MODEL_PRIMARY,
     api_key=settings.NVIDIA_API_KEY,
-).with_fallbacks([
-    ChatNVIDIA(model=settings.NVIDIA_MODEL_FALLBACK, api_key=settings.NVIDIA_API_KEY)
-])
+).with_fallbacks(
+    [ChatNVIDIA(model=settings.NVIDIA_MODEL_FALLBACK, api_key=settings.NVIDIA_API_KEY)]
+)
 
 _agent = create_react_agent(_llm, tools=_TOOLS, max_iterations=5)
 

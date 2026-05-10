@@ -1,9 +1,11 @@
-from telegram import Update, ReactionTypeEmoji, InputFile
-from telegram.ext import ContextTypes
-from app.db.pool import get_connection
-import app.bot_registry as bot_registry
-import logging
 import io
+import logging
+
+from telegram import InputFile, ReactionTypeEmoji, Update
+from telegram.ext import ContextTypes
+
+import app.bot_registry as bot_registry
+from app.db.pool import get_connection
 
 logger = logging.getLogger(__name__)
 
@@ -25,25 +27,34 @@ async def handle_payment_receipt(update: Update, context: ContextTypes.DEFAULT_T
 
     async with get_connection() as conn:
         # Buscar la orden pendiente más reciente del cliente
-        order = await conn.fetchrow("""
+        order = await conn.fetchrow(
+            """
             SELECT o.id, o.total
             FROM transactions.orders o
             JOIN core.users u ON u.id = o.user_id
             WHERE u.telegram_id = $1 AND o.status = 'pending'
             ORDER BY o.created_at DESC LIMIT 1
-        """, telegram_id)
+        """,
+            telegram_id,
+        )
 
         if not order:
             await update.message.reply_text("No tienes órdenes pendientes de pago en este momento.")
             return
 
         # Registrar el pago en BD
-        await conn.execute("""
+        await conn.execute(
+            """
             INSERT INTO transactions.payments
                 (payment_method_id, amount, order_id, status, voucher_url, reference_number)
             VALUES
                 ((SELECT id FROM catalog.payment_methods LIMIT 1), $1, $2, 'pending', $3, $4)
-        """, order['total'], order['id'], photo_file_id, photo_file_id)
+        """,
+            order["total"],
+            order["id"],
+            photo_file_id,
+            photo_file_id,
+        )
 
         # Obtener todos los admins registrados
         admins = await conn.fetch("""
@@ -63,8 +74,12 @@ async def handle_payment_receipt(update: Update, context: ContextTypes.DEFAULT_T
     bot_am_app = bot_registry.bot_am_app
 
     if bot_am_app is None or bot_cs_app is None:
-        logger.error("Los bots no estan inicializados en el registry. Comprobante NO enviado a admins.")
-        await update.message.reply_text("Comprobante recibido. Nuestro equipo lo verificara en breve.")
+        logger.error(
+            "Los bots no estan inicializados en el registry. Comprobante NO enviado a admins."
+        )
+        await update.message.reply_text(
+            "Comprobante recibido. Nuestro equipo lo verificara en breve."
+        )
         return
 
     # Descargar la imagen usando el CS bot (unico que puede acceder a su propio file_id)
@@ -74,7 +89,9 @@ async def handle_payment_receipt(update: Update, context: ContextTypes.DEFAULT_T
         logger.info(f"Imagen del comprobante descargada correctamente ({len(file_bytes)} bytes)")
     except Exception as e:
         logger.error(f"Error al descargar la imagen via CS bot: {e}")
-        await update.message.reply_text("Comprobante recibido. Nuestro equipo lo verificara en breve.")
+        await update.message.reply_text(
+            "Comprobante recibido. Nuestro equipo lo verificara en breve."
+        )
         return
 
     caption = (
@@ -88,21 +105,26 @@ async def handle_payment_receipt(update: Update, context: ContextTypes.DEFAULT_T
     # Broadcast: enviar a cada admin individualmente re-subiendo los bytes
     async with get_connection() as conn:
         for admin in admins:
-            admin_tid = admin['telegram_id']
+            admin_tid = admin["telegram_id"]
             try:
                 # Re-subir los bytes via AM bot (resuelve el problema de file_ids bot-especificos)
                 sent = await bot_am_app.bot.send_photo(
                     chat_id=admin_tid,
                     photo=InputFile(io.BytesIO(bytes(file_bytes)), filename="voucher.jpg"),
-                    caption=caption
+                    caption=caption,
                 )
                 # Registrar el message_id en la tabla de rastreo
-                await conn.execute("""
+                await conn.execute(
+                    """
                     INSERT INTO system.admin_payment_msgs
                         (order_id, admin_telegram_id, message_id)
                     VALUES ($1, $2, $3)
                     ON CONFLICT (admin_telegram_id, message_id) DO NOTHING
-                """, order['id'], admin_tid, sent.message_id)
+                """,
+                    order["id"],
+                    admin_tid,
+                    sent.message_id,
+                )
 
                 logger.info(
                     f"Comprobante de orden {order['id']} enviado al admin {admin_tid} "
@@ -139,10 +161,7 @@ async def handle_reaction(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     # Verificar si alguna reacción nueva es 👍
-    is_thumbsup = any(
-        isinstance(r, ReactionTypeEmoji) and r.emoji == "👍"
-        for r in new_reactions
-    )
+    is_thumbsup = any(isinstance(r, ReactionTypeEmoji) and r.emoji == "👍" for r in new_reactions)
     if not is_thumbsup:
         return
 
@@ -151,11 +170,14 @@ async def handle_reaction(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     async with get_connection() as conn:
         # Verificar que quien reaccionó sea admin
-        is_admin = await conn.fetchrow("""
+        is_admin = await conn.fetchrow(
+            """
             SELECT id FROM core.users
             WHERE telegram_id = $1
               AND type_user_id = (SELECT id FROM catalog.type_users WHERE name = 'admin')
-        """, reactor_id)
+        """,
+            reactor_id,
+        )
 
         if not is_admin:
             logger.warning(f"Reacción 👍 ignorada: {reactor_id} no es admin.")
@@ -171,7 +193,8 @@ async def handle_reaction(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 WHERE admin_telegram_id = $1 AND message_id = $2
                 FOR UPDATE
                 """,
-                reactor_id, message_id,
+                reactor_id,
+                message_id,
             )
             if not msg_record:
                 logger.warning(f"No order found for admin {reactor_id} / msg {message_id}.")
@@ -181,48 +204,53 @@ async def handle_reaction(update: Update, context: ContextTypes.DEFAULT_TYPE):
             # Verificar que la orden siga pendiente (evitar doble aprobación)
             order = await conn.fetchrow(
                 "SELECT id, user_id FROM transactions.orders WHERE id = $1 AND status = 'pending' FOR UPDATE",
-                order_id
+                order_id,
             )
             if not order:
                 logger.info(f"Orden {order_id} ya fue procesada anteriormente. Ignorando.")
                 return
 
             # Activar tickets
-            await conn.execute("""
+            await conn.execute(
+                """
                 UPDATE transactions.tickets
                 SET ticket_state_id = (SELECT id FROM catalog.ticket_states WHERE name = 'active')
                 WHERE id IN (
                     SELECT ticket_id FROM transactions.order_details
                     WHERE order_id = $1 AND ticket_id IS NOT NULL
                 )
-            """, order_id)
+            """,
+                order_id,
+            )
 
             # Confirmar reservas
-            await conn.execute("""
+            await conn.execute(
+                """
                 UPDATE transactions.reservations
                 SET reservation_state_id = (SELECT id FROM catalog.reservation_states WHERE name = 'confirmed')
                 WHERE id IN (
                     SELECT reservation_id FROM transactions.order_details
                     WHERE order_id = $1 AND reservation_id IS NOT NULL
                 )
-            """, order_id)
+            """,
+                order_id,
+            )
 
             # Verificar el pago
             await conn.execute(
                 "UPDATE transactions.payments SET status = 'verified' WHERE order_id = $1 AND status = 'pending'",
-                order_id
+                order_id,
             )
 
             # Aprobar la orden
             await conn.execute(
                 "UPDATE transactions.orders SET status = 'approved', updated_at = CURRENT_TIMESTAMP WHERE id = $1",
-                order_id
+                order_id,
             )
 
             # Limpiar registros de rastreo para esta orden
             await conn.execute(
-                "DELETE FROM system.admin_payment_msgs WHERE order_id = $1",
-                order_id
+                "DELETE FROM system.admin_payment_msgs WHERE order_id = $1", order_id
             )
 
         logger.info(f"✅ Orden {order_id} APROBADA por admin {reactor_id}")
@@ -230,7 +258,7 @@ async def handle_reaction(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Obtener todos los admin_telegram_ids que recibieron este comprobante
         # (ya eliminados, así que guardamos el user_id antes de borrar)
         user = await conn.fetchrow(
-            "SELECT telegram_id FROM core.users WHERE id = $1", order['user_id']
+            "SELECT telegram_id FROM core.users WHERE id = $1", order["user_id"]
         )
 
     # Notificar al cliente via bot CS
@@ -238,12 +266,12 @@ async def handle_reaction(update: Update, context: ContextTypes.DEFAULT_TYPE):
         bot_cs_app = bot_registry.bot_cs_app
         try:
             await bot_cs_app.bot.send_message(
-                chat_id=user['telegram_id'],
+                chat_id=user["telegram_id"],
                 text=(
                     f"✅ ¡Tu pago para la orden `{order_id}` ha sido *aprobado*!\n\n"
                     f"Ya tienes acceso confirmado. ¡Nos vemos en Deluxe! 🎉"
                 ),
-                parse_mode="Markdown"
+                parse_mode="Markdown",
             )
         except Exception as e:
             logger.error(f"Error al notificar al cliente {user['telegram_id']}: {e}")

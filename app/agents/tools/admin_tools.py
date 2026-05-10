@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
+
 from langchain_core.tools import tool
+
 from app.db.pool import get_connection
 
 logger = logging.getLogger(__name__)
@@ -22,7 +24,10 @@ async def admin_crear_evento(nombre: str, descripcion: str, start_time: str, end
             VALUES ($1, $2, $3, $4, (SELECT id FROM catalog.event_states WHERE name = 'ongoing'))
             RETURNING id, name
             """,
-            nombre, descripcion, dt_start, dt_end,
+            nombre,
+            descripcion,
+            dt_start,
+            dt_end,
         )
         return {"status": "success", "event": dict(row)}
 
@@ -39,7 +44,8 @@ async def admin_cambiar_estado_evento(nombre_evento: str, nuevo_estado: str) -> 
             WHERE name ILIKE $1
             RETURNING id, name
             """,
-            f"%{nombre_evento}%", nuevo_estado,
+            f"%{nombre_evento}%",
+            nuevo_estado,
         )
         if not row:
             return {"status": "error", "message": "Evento no encontrado."}
@@ -49,7 +55,7 @@ async def admin_cambiar_estado_evento(nombre_evento: str, nuevo_estado: str) -> 
 @tool
 async def admin_cancelar_evento(nombre_evento: str) -> dict:
     """Cancela un evento y en cascada cancela tickets y reservas."""
-    async with get_connection() as conn:
+    async with get_connection() as conn:  # noqa: SIM117
         async with conn.transaction():
             evt = await conn.fetchrow(
                 "SELECT id FROM core.events WHERE name ILIKE $1 FOR UPDATE",
@@ -85,13 +91,16 @@ async def admin_cancelar_evento(nombre_evento: str) -> dict:
                 "(SELECT id FROM catalog.event_states WHERE name = 'cancelled') WHERE id = $1",
                 evt["id"],
             )
-            return {"status": "success", "message": "Evento y sus reservas cancelados exitosamente."}
+            return {
+                "status": "success",
+                "message": "Evento y sus reservas cancelados exitosamente.",
+            }
 
 
 @tool
 async def admin_aprobar_orden(order_id: int) -> dict:
     """Aprueba manualmente una orden pendiente. Activa tickets y confirma reservas."""
-    async with get_connection() as conn:
+    async with get_connection() as conn:  # noqa: SIM117
         async with conn.transaction():
             order = await conn.fetchrow(
                 "SELECT id FROM transactions.orders WHERE id = $1 AND status = 'pending' FOR UPDATE",
@@ -180,7 +189,9 @@ async def admin_crear_lote_mesas(
                     VALUES ($1, $2, $3, (SELECT id FROM catalog.table_states WHERE name = 'available'))
                     RETURNING id
                     """,
-                    start_num + i, tt_id, capacidad,
+                    start_num + i,
+                    tt_id,
+                    capacidad,
                 )
                 mesas_creadas.append(t["id"])
 
@@ -197,7 +208,9 @@ async def admin_crear_lote_mesas(
                             VALUES ($1, $2, $3)
                             ON CONFLICT (table_id, event_id) DO UPDATE SET price = EXCLUDED.price
                             """,
-                            m_id, evt["id"], precio_opcional,
+                            m_id,
+                            evt["id"],
+                            precio_opcional,
                         )
 
         msg = (
@@ -219,9 +232,7 @@ async def admin_configurar_precio_mesa(nombre_evento: str, numero_mesa: int, pre
         if not evt:
             return {"status": "error", "message": "Evento no encontrado."}
 
-        mesa = await conn.fetchrow(
-            "SELECT id FROM core.dico_tables WHERE number = $1", numero_mesa
-        )
+        mesa = await conn.fetchrow("SELECT id FROM core.dico_tables WHERE number = $1", numero_mesa)
         if not mesa:
             return {"status": "error", "message": "Mesa no encontrada."}
 
@@ -231,9 +242,14 @@ async def admin_configurar_precio_mesa(nombre_evento: str, numero_mesa: int, pre
             VALUES ($1, $2, $3)
             ON CONFLICT (table_id, event_id) DO UPDATE SET price = EXCLUDED.price
             """,
-            mesa["id"], evt["id"], precio,
+            mesa["id"],
+            evt["id"],
+            precio,
         )
-        return {"status": "success", "message": f"Precio ${precio} configurado para mesa {numero_mesa} en '{nombre_evento}'."}
+        return {
+            "status": "success",
+            "message": f"Precio ${precio} configurado para mesa {numero_mesa} en '{nombre_evento}'.",
+        }
 
 
 @tool
@@ -250,7 +266,10 @@ async def admin_crear_tickets_evento(
 
         await conn.execute(
             "INSERT INTO core.type_tickets (name, event_id, available_quantity, price) VALUES ($1, $2, $3, $4)",
-            nombre_ticket, evt["id"], cantidad, precio,
+            nombre_ticket,
+            evt["id"],
+            cantidad,
+            precio,
         )
         return {
             "status": "success",

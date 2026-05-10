@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     TELEGRAM_BOT_TOKEN_CS: str
     TELEGRAM_BOT_TOKEN_AM: str
     WEBHOOK_BASE_URL: str
-    WEBHOOK_SECRET_TOKEN: str = ""   # Validates X-Telegram-Bot-Api-Secret-Token header
+    WEBHOOK_SECRET_TOKEN: str = ""  # Validates X-Telegram-Bot-Api-Secret-Token header
 
     # NVIDIA NIM
     NVIDIA_API_KEY: str
@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     NVIDIA_MODEL_FALLBACK: str = "mistralai/mistral-large-2-instruct"
 
     # Deploy / ops
-    ENABLE_BACKGROUND_SCHEDULER: bool = False   # Use EventBridge on AWS; True for local dev only
+    ENABLE_BACKGROUND_SCHEDULER: bool = False  # Use EventBridge on AWS; True for local dev only
 
     # Redis / memory
     REDIS_URL: str | None = None

@@ -1,5 +1,7 @@
 import logging
+
 from langchain_core.tools import tool
+
 from app.db.pool import get_connection
 
 logger = logging.getLogger(__name__)

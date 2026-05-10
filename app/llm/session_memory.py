@@ -1,6 +1,5 @@
 import re
-from typing import Any, Dict
-
+from typing import Any
 
 ALLOWED_SESSION_KEYS = {
     "active_flow",
@@ -24,7 +23,7 @@ FLOW_KEYWORDS = {
 TICKET_TYPES = ("general", "vip", "palco", "preventa")
 
 
-def filter_session_patch(patch: Dict[str, Any]) -> Dict[str, Any]:
+def filter_session_patch(patch: dict[str, Any]) -> dict[str, Any]:
     return {
         key: value
         for key, value in patch.items()
@@ -32,9 +31,9 @@ def filter_session_patch(patch: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def derive_session_patch(role: str, text: str) -> Dict[str, Any]:
+def derive_session_patch(role: str, text: str) -> dict[str, Any]:
     normalized = text.lower().strip()
-    patch: Dict[str, Any] = {}
+    patch: dict[str, Any] = {}
 
     active_flow = _detect_active_flow(role, normalized)
     if active_flow:
@@ -69,7 +68,7 @@ def derive_session_patch(role: str, text: str) -> Dict[str, Any]:
     return filter_session_patch(patch)
 
 
-def build_memory_prompt(session: Dict[str, Any], has_recent_history: bool) -> str:
+def build_memory_prompt(session: dict[str, Any], has_recent_history: bool) -> str:
     snippets = []
 
     if has_recent_history:
@@ -142,7 +141,10 @@ def _extract_event_name(text: str) -> str | None:
     if quoted:
         return quoted.group(1).strip()
 
-    event_match = re.search(r"(?:evento|fiesta)\s+([A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚÑáéíóúñ-]*(?:\s+[A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚÑáéíóúñ-]*){0,4})", text)
+    event_match = re.search(
+        r"(?:evento|fiesta)\s+([A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚÑáéíóúñ-]*(?:\s+[A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚÑáéíóúñ-]*){0,4})",
+        text,
+    )
     if event_match:
         return event_match.group(1).strip()
     return None
@@ -180,6 +182,9 @@ def _extract_ticket_type(normalized: str) -> str | None:
 
 def _extract_budget(normalized: str) -> str | None:
     match = re.search(r"(\$?\s?\d[\d\.\,]*)", normalized)
-    if match and any(keyword in normalized for keyword in ("presupuesto", "tengo", "máximo", "maximo", "cuesta", "vale")):
+    if match and any(
+        keyword in normalized
+        for keyword in ("presupuesto", "tengo", "máximo", "maximo", "cuesta", "vale")
+    ):
         return match.group(1).replace(" ", "")
     return None
