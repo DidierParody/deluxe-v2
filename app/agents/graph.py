@@ -1,6 +1,6 @@
 import logging
 
-from langgraph.checkpoint.redis.aio import AsyncRedisSaver
+from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph
 
 from app.agents.nodes.admin_agent import admin_agent_node
@@ -22,14 +22,13 @@ _AGENT_NODES = {
 }
 
 
-def compile_graph(redis_client):
+def compile_graph(redis_client=None):
     """
     Builds and compiles the LangGraph StateGraph.
-    redis_client: async Redis client (from app.cache.redis_client) used for checkpointing.
-    event_agent is stateless (no checkpointer needed for read-only queries).
-    All other agents persist conversation via the Redis checkpointer.
+    Uses in-process MemorySaver for checkpointing (sufficient for single-task ECS).
+    Conversation session context is persisted separately via the Redis session store.
     """
-    checkpointer = AsyncRedisSaver(redis_client)
+    checkpointer = MemorySaver()
 
     builder = StateGraph(DeluxeState)
     builder.add_node("router", router_node)
