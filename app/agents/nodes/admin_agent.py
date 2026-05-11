@@ -11,12 +11,14 @@ from app.agents.tools.admin_tools import (
     admin_crear_evento,
     admin_crear_lote_mesas,
     admin_crear_tickets_evento,
+    admin_ver_eventos,
     admin_ver_ordenes_pendientes,
 )
 from app.config import settings
 from app.llm.prompts import get_system_prompt
 
 _TOOLS = [
+    admin_ver_eventos,
     admin_crear_evento,
     admin_cambiar_estado_evento,
     admin_cancelar_evento,
