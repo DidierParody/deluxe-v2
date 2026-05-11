@@ -298,6 +298,59 @@ async def admin_configurar_precio_mesa(nombre_evento: str, numero_mesa: int, pre
 
 
 @tool
+async def admin_ver_eventos() -> str:
+    """Lista todos los eventos existentes con su estado, mesas y tipos de tickets. Úsala para responder preguntas sobre qué hay en el sistema."""
+    try:
+        async with get_connection() as conn:
+            events = await conn.fetch(
+                """
+                SELECT e.id, e.name, e.description, e.start_time, e.end_time,
+                       es.name AS estado
+                FROM core.events e
+                JOIN catalog.event_states es ON es.id = e.event_state_id
+                ORDER BY e.start_time DESC
+                """
+            )
+            if not events:
+                return _json({"eventos": [], "mensaje": "No hay eventos registrados."})
+
+            result = []
+            for evt in events:
+                tables = await conn.fetch(
+                    """
+                    SELECT tt.name AS tipo, COUNT(dt.id) AS cantidad,
+                           dt.capacity AS capacidad, tp.price AS precio
+                    FROM core.dico_tables dt
+                    JOIN catalog.table_types tt ON tt.id = dt.table_type_id
+                    LEFT JOIN core.table_prices tp ON tp.table_id = dt.id AND tp.event_id = $1
+                    GROUP BY tt.name, dt.capacity, tp.price
+                    ORDER BY tt.name
+                    """,
+                    evt["id"],
+                )
+                tickets = await conn.fetch(
+                    """
+                    SELECT name, available_quantity, price
+                    FROM core.type_tickets
+                    WHERE event_id = $1
+                    ORDER BY price
+                    """,
+                    evt["id"],
+                )
+                result.append(
+                    {
+                        "evento": dict(evt),
+                        "mesas": [dict(t) for t in tables],
+                        "tipos_tickets": [dict(t) for t in tickets],
+                    }
+                )
+            return _json(result)
+    except Exception as exc:
+        logger.error(f"admin_ver_eventos error: {exc}")
+        return _json({"error": str(exc)})
+
+
+@tool
 async def admin_crear_tickets_evento(
     nombre_evento: str, nombre_ticket: str, cantidad: int, precio: float
 ) -> str:
