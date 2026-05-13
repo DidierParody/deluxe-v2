@@ -32,13 +32,13 @@ resource "aws_security_group" "ecs" {
 resource "aws_cloudwatch_log_group" "web" {
   name              = "/ecs/${var.project}-web"
   retention_in_days = 14
-  tags = { Name = "${var.project}-web-logs" }
+  tags              = { Name = "${var.project}-web-logs" }
 }
 
 resource "aws_cloudwatch_log_group" "cron" {
   name              = "/ecs/${var.project}-cron"
   retention_in_days = 7
-  tags = { Name = "${var.project}-cron-logs" }
+  tags              = { Name = "${var.project}-cron-logs" }
 }
 
 resource "aws_ecs_task_definition" "web" {
@@ -51,23 +51,23 @@ resource "aws_ecs_task_definition" "web" {
   task_role_arn            = var.task_role_arn
 
   container_definitions = jsonencode([{
-    name      = "${var.project}-app"
-    image     = var.web_image_uri
-    essential = true
+    name         = "${var.project}-app"
+    image        = var.web_image_uri
+    essential    = true
     portMappings = [{ containerPort = 8000, protocol = "tcp" }]
     secrets = [
-      { name = "DATABASE_URL",           valueFrom = "${var.secrets_arn}:DATABASE_URL::" },
-      { name = "TELEGRAM_BOT_TOKEN_CS",  valueFrom = "${var.secrets_arn}:TELEGRAM_BOT_TOKEN_CS::" },
-      { name = "TELEGRAM_BOT_TOKEN_AM",  valueFrom = "${var.secrets_arn}:TELEGRAM_BOT_TOKEN_AM::" },
-      { name = "WEBHOOK_BASE_URL",       valueFrom = "${var.secrets_arn}:WEBHOOK_BASE_URL::" },
-      { name = "WEBHOOK_SECRET_TOKEN",   valueFrom = "${var.secrets_arn}:WEBHOOK_SECRET_TOKEN::" },
-      { name = "NVIDIA_API_KEY",         valueFrom = "${var.secrets_arn}:NVIDIA_API_KEY::" },
+      { name = "DATABASE_URL", valueFrom = "${var.secrets_arn}:DATABASE_URL::" },
+      { name = "TELEGRAM_BOT_TOKEN_CS", valueFrom = "${var.secrets_arn}:TELEGRAM_BOT_TOKEN_CS::" },
+      { name = "TELEGRAM_BOT_TOKEN_AM", valueFrom = "${var.secrets_arn}:TELEGRAM_BOT_TOKEN_AM::" },
+      { name = "WEBHOOK_BASE_URL", valueFrom = "${var.secrets_arn}:WEBHOOK_BASE_URL::" },
+      { name = "WEBHOOK_SECRET_TOKEN", valueFrom = "${var.secrets_arn}:WEBHOOK_SECRET_TOKEN::" },
+      { name = "NVIDIA_API_KEY", valueFrom = "${var.secrets_arn}:NVIDIA_API_KEY::" },
       { name = "UPSTASH_REDIS_REST_URL", valueFrom = "${var.secrets_arn}:UPSTASH_REDIS_REST_URL::" },
       { name = "UPSTASH_REDIS_REST_TOKEN", valueFrom = "${var.secrets_arn}:UPSTASH_REDIS_REST_TOKEN::" }
     ]
     environment = [
-      { name = "REDIS_MEMORY_ENABLED",           value = "true" },
-      { name = "ENABLE_BACKGROUND_SCHEDULER",    value = "false" }
+      { name = "REDIS_MEMORY_ENABLED", value = "true" },
+      { name = "ENABLE_BACKGROUND_SCHEDULER", value = "false" }
     ]
     logConfiguration = {
       logDriver = "awslogs"
@@ -106,7 +106,7 @@ resource "aws_ecs_service" "web" {
   }
 
   lifecycle {
-    ignore_changes = [task_definition]   # Managed by CI/CD
+    ignore_changes = [task_definition, desired_count]
   }
 }
 
@@ -124,7 +124,7 @@ resource "aws_ecs_task_definition" "cron" {
     name      = "${var.project}-cron"
     image     = var.cron_image_uri
     essential = true
-    command   = []   # Overridden per-schedule by EventBridge input
+    command   = [] # Overridden per-schedule by EventBridge input
     secrets = [
       { name = "DATABASE_URL", valueFrom = "${var.secrets_arn}:DATABASE_URL::" }
     ]
@@ -168,12 +168,12 @@ resource "aws_iam_role_policy" "scheduler_ecs" {
 locals {
   cron_jobs = {
     finalizar_eventos = {
-      schedule    = "rate(5 minutes)"
-      job_name    = "finalizar_eventos_expirados"
+      schedule = "rate(5 minutes)"
+      job_name = "finalizar_eventos_expirados"
     }
     liberar_mesas = {
-      schedule    = "rate(10 minutes)"
-      job_name    = "liberar_mesas_expiradas"
+      schedule = "rate(10 minutes)"
+      job_name = "liberar_mesas_expiradas"
     }
   }
 }
@@ -209,5 +209,52 @@ resource "aws_scheduler_schedule" "cron" {
         command = [each.value.job_name]
       }]
     })
+  }
+}
+
+# ── ECS Autoscaling ───────────────────────────────────────────────────────────
+resource "aws_appautoscaling_target" "web" {
+  max_capacity       = 3
+  min_capacity       = 1
+  resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.web.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
+
+resource "aws_appautoscaling_policy" "cpu_scale_out" {
+  name               = "${var.project}-cpu-scale-out"
+  policy_type        = "StepScaling"
+  resource_id        = aws_appautoscaling_target.web.resource_id
+  scalable_dimension = aws_appautoscaling_target.web.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.web.service_namespace
+
+  step_scaling_policy_configuration {
+    adjustment_type         = "ChangeInCapacity"
+    cooldown                = 60
+    metric_aggregation_type = "Average"
+
+    step_adjustment {
+      metric_interval_lower_bound = 0
+      scaling_adjustment          = 1
+    }
+  }
+}
+
+resource "aws_appautoscaling_policy" "cpu_scale_in" {
+  name               = "${var.project}-cpu-scale-in"
+  policy_type        = "StepScaling"
+  resource_id        = aws_appautoscaling_target.web.resource_id
+  scalable_dimension = aws_appautoscaling_target.web.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.web.service_namespace
+
+  step_scaling_policy_configuration {
+    adjustment_type         = "ChangeInCapacity"
+    cooldown                = 300
+    metric_aggregation_type = "Average"
+
+    step_adjustment {
+      metric_interval_upper_bound = 0
+      scaling_adjustment          = -1
+    }
   }
 }
