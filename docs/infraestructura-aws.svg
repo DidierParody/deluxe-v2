@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2330 1190" width="2330" height="1190" style="background:#ffffff">
+<rect x="40.0" y="290.0" width="890.0" height="860.0" rx="6" fill="#f8fff8" stroke="#2f9e44" stroke-width="3" />
+<text x="485.0" y="724.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">VPC — 10.0.0.0/16</text>
+<rect x="70.0" y="675.0" width="820.0" height="450.0" rx="6" fill="#f0fff4" stroke="#2f9e44" stroke-width="1" />
+<text x="480.0" y="895.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">Subnets Privadas  (Route</text>
+<text x="480.0" y="913.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">Table → NAT Gateway)</text>
+<rect x="70.0" y="325.0" width="820.0" height="310.0" rx="6" fill="#fffde7" stroke="#c78f00" stroke-width="1" />
+<text x="480.0" y="475.4" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#c78f00" text-anchor="middle" dominant-baseline="auto">Subnets Públicas  (Route</text>
+<text x="480.0" y="493.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#c78f00" text-anchor="middle" dominant-baseline="auto">Table → Internet Gateway)</text>
+<rect x="970.0" y="290.0" width="235.0" height="860.0" rx="6" fill="#fffdf0" stroke="#e67700" stroke-width="2" />
+<text x="1087.5" y="724.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">AWS Managed Services</text>
+<rect x="1245.0" y="290.0" width="215.0" height="620.0" rx="6" fill="#fff8f0" stroke="#e8590c" stroke-width="2" />
+<text x="1352.5" y="604.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e8590c" text-anchor="middle" dominant-baseline="auto">Servicios Externos</text>
+<rect x="90.0" y="708.0" width="270.0" height="390.0" rx="6" fill="#ebfbee" stroke="#2f9e44" stroke-width="1" />
+<text x="225.0" y="898.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">Private 3a  10.0.3.0/24</text>
+<text x="225.0" y="916.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">us-east-1a</text>
+<rect x="400.0" y="708.0" width="270.0" height="390.0" rx="6" fill="#ebfbee" stroke="#2f9e44" stroke-width="1" />
+<text x="535.0" y="898.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">Private 3b  10.0.4.0/24</text>
+<text x="535.0" y="916.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">us-east-1b</text>
+<rect x="90.0" y="358.0" width="270.0" height="255.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="225.0" y="480.9" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">Public 1a  10.0.1.0/24</text>
+<text x="225.0" y="498.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">us-east-1a</text>
+<rect x="400.0" y="358.0" width="270.0" height="255.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="535.0" y="480.9" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">Public 1b  10.0.2.0/24</text>
+<text x="535.0" y="498.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">us-east-1b</text>
+<rect x="108.0" y="758.0" width="235.0" height="75.0" rx="6" fill="#d3f9d8" stroke="#2f9e44" stroke-width="1" />
+<text x="225.5" y="782.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">ECS Fargate Task</text>
+<text x="225.5" y="799.7" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">FastAPI :8000</text>
+<text x="225.5" y="817.3" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">512 CPU / 1024 MB RAM</text>
+<rect x="418.0" y="758.0" width="235.0" height="75.0" rx="6" fill="#d3f9d8" stroke="#2f9e44" stroke-width="1" />
+<text x="535.5" y="782.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">ECS Fargate Task</text>
+<text x="535.5" y="799.7" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">(Autoscale  min=1 / max=3)</text>
+<text x="535.5" y="817.3" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">CPU scale-out &gt; 70%</text>
+<rect x="108.0" y="855.0" width="235.0" height="70.0" rx="6" fill="#fff3bf" stroke="#c78f00" stroke-width="1" />
+<text x="225.5" y="876.7" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#c78f00" text-anchor="middle" dominant-baseline="auto">RDS PostgreSQL 16</text>
+<text x="225.5" y="894.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#c78f00" text-anchor="middle" dominant-baseline="auto">db.t4g.micro  :5432</text>
+<text x="225.5" y="911.8" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#c78f00" text-anchor="middle" dominant-baseline="auto">encrypted · no Multi-AZ</text>
+<rect x="108.0" y="945.0" width="235.0" height="55.0" rx="6" fill="#d3f9d8" stroke="#2f9e44" stroke-width="1" />
+<text x="225.5" y="968.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">ECS Cron Task</text>
+<text x="225.5" y="985.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">run_job.py  256 CPU / 512 MB</text>
+<rect x="108.0" y="408.0" width="235.0" height="50.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="225.5" y="437.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">NAT Gateway  (Elastic IP)</text>
+<rect x="108.0" y="472.0" width="235.0" height="50.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="225.5" y="492.4" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">ALB  HTTP :80  (SG: open</text>
+<text x="225.5" y="510.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">internet)</text>
+<rect x="418.0" y="408.0" width="235.0" height="50.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="535.5" y="437.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">ALB  (multi-AZ)</text>
+<rect x="418.0" y="855.0" width="235.0" height="50.0" rx="6" fill="#f8f9fa" stroke="#adb5bd" stroke-width="1" />
+<text x="535.5" y="875.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#adb5bd" text-anchor="middle" dominant-baseline="auto">RDS Subnet Group (standby</text>
+<text x="535.5" y="893.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#adb5bd" text-anchor="middle" dominant-baseline="auto">AZ)</text>
+<rect x="985.0" y="338.0" width="200.0" height="58.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="1085.0" y="362.4" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">API Gateway HTTP API</text>
+<text x="1085.0" y="380.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">(HTTPS — Telegram proxy)</text>
+<rect x="425.0" y="90.0" width="210.0" height="55.0" rx="6" fill="#e7f5ff" stroke="#1971c2" stroke-width="1" />
+<text x="530.0" y="121.7" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#1971c2" text-anchor="middle" dominant-baseline="auto">Telegram Servers / Internet</text>
+<rect x="985.0" y="418.0" width="200.0" height="55.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="1085.0" y="440.9" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">ECR</text>
+<text x="1085.0" y="458.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">Docker Image Registry</text>
+<rect x="985.0" y="495.0" width="200.0" height="55.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="1085.0" y="518.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">Secrets Manager</text>
+<text x="1085.0" y="535.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">deluxe-v2/app</text>
+<rect x="985.0" y="572.0" width="200.0" height="55.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="1085.0" y="595.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">EventBridge Scheduler</text>
+<text x="1085.0" y="612.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">(cron tasks)</text>
+<rect x="985.0" y="649.0" width="200.0" height="55.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="1085.0" y="672.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">CloudWatch</text>
+<text x="1085.0" y="689.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">Dashboards + Alarms</text>
+<rect x="985.0" y="726.0" width="200.0" height="55.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="1085.0" y="749.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">SNS</text>
+<text x="1085.0" y="766.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">Alerts → email</text>
+<rect x="985.0" y="803.0" width="200.0" height="55.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="1085.0" y="826.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">IAM Roles + OIDC</text>
+<text x="1085.0" y="843.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">(GitHub Actions → AWS)</text>
+<rect x="425.0" y="205.0" width="210.0" height="52.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="530.0" y="235.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">Internet Gateway</text>
+<rect x="1258.0" y="338.0" width="188.0" height="58.0" rx="6" fill="#ffe8cc" stroke="#e8590c" stroke-width="1" />
+<text x="1352.0" y="362.4" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e8590c" text-anchor="middle" dominant-baseline="auto">Upstash Redis</text>
+<text x="1352.0" y="380.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e8590c" text-anchor="middle" dominant-baseline="auto">(Sesiones / Idempotency)</text>
+<rect x="1258.0" y="418.0" width="188.0" height="58.0" rx="6" fill="#ffe8cc" stroke="#e8590c" stroke-width="1" />
+<text x="1352.0" y="433.7" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e8590c" text-anchor="middle" dominant-baseline="auto">NVIDIA NIM API</text>
+<text x="1352.0" y="451.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e8590c" text-anchor="middle" dominant-baseline="auto">llama-3.3-70b / mistral-</text>
+<text x="1352.0" y="468.8" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e8590c" text-anchor="middle" dominant-baseline="auto">large</text>
+<rect x="1258.0" y="498.0" width="188.0" height="55.0" rx="6" fill="#e7f5ff" stroke="#1971c2" stroke-width="1" />
+<text x="1352.0" y="521.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#1971c2" text-anchor="middle" dominant-baseline="auto">Telegram Servers</text>
+<text x="1352.0" y="538.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#1971c2" text-anchor="middle" dominant-baseline="auto">(webhook delivery)</text>
+<rect x="1258.0" y="575.0" width="188.0" height="55.0" rx="6" fill="#f1f3f5" stroke="#495057" stroke-width="1" />
+<text x="1352.0" y="598.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#495057" text-anchor="middle" dominant-baseline="auto">GitHub Actions</text>
+<text x="1352.0" y="615.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#495057" text-anchor="middle" dominant-baseline="auto">(push a main → deploy)</text>
+<text x="570.0" y="40.0" font-family="system-ui, -apple-system, sans-serif" font-size="22px" fill="#212529">Infraestructura AWS — Deluxe v2  (us-east-1)</text>
+<line x1="530.0" y1="145.0" x2="530.0" y2="205.0" stroke="#1971c2" stroke-width="1.5" /><polygon points="530.0,205.0 526.5,195.0 533.5,195.0" fill="#1971c2" />
+<line x1="530.0" y1="257.0" x2="226.0" y2="358.0" stroke="#e67700" stroke-width="1.5" /><polygon points="226.0,358.0 234.4,351.5 236.6,358.2" fill="#e67700" />
+<line x1="226.0" y1="522.0" x2="226.0" y2="708.0" stroke="#e67700" stroke-width="1.5" /><polygon points="226.0,708.0 222.5,698.0 229.5,698.0" fill="#e67700" />
+<line x1="985.0" y1="367.0" x2="226.0" y2="758.0" stroke="#e67700" stroke-width="1.5" /><polygon points="226.0,758.0 233.3,750.3 236.5,756.5" fill="#e67700" />
+<line x1="985.0" y1="445.0" x2="226.0" y2="758.0" stroke="#e67700" stroke-width="1.5" /><polygon points="226.0,758.0 233.9,751.0 236.6,757.4" fill="#e67700" />
+<line x1="985.0" y1="599.0" x2="345.0" y2="945.0" stroke="#e67700" stroke-width="1.5" /><polygon points="345.0,945.0 352.1,937.2 355.5,943.3" fill="#e67700" />
+<line x1="985.0" y1="676.0" x2="226.0" y2="796.0" stroke="#e67700" stroke-width="1.5" /><polygon points="226.0,796.0 235.3,791.0 236.4,797.9" fill="#e67700" />
+<line x1="1258.0" y1="367.0" x2="226.0" y2="758.0" stroke="#e8590c" stroke-width="1.5" /><polygon points="226.0,758.0 234.1,751.2 236.6,757.7" fill="#e8590c" />
+<line x1="1258.0" y1="447.0" x2="226.0" y2="758.0" stroke="#e8590c" stroke-width="1.5" /><polygon points="226.0,758.0 234.6,751.8 236.6,758.5" fill="#e8590c" />
+<line x1="1258.0" y1="602.0" x2="226.0" y2="758.0" stroke="#495057" stroke-width="1.5" /><polygon points="226.0,758.0 235.4,753.0 236.4,760.0" fill="#495057" />
+</svg>

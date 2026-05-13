@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1450 1060" width="1450" height="1060" style="background:#ffffff">
+<rect x="40.0" y="485.0" width="730.0" height="450.0" rx="6" fill="#f6fff8" stroke="#2f9e44" stroke-width="2" />
+<text x="405.0" y="696.7" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">ECS Fargate —</text>
+<text x="405.0" y="714.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">deluxe-v2-cluster  (Private</text>
+<text x="405.0" y="731.8" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">Subnets, us-east-1)</text>
+<rect x="70.0" y="645.0" width="670.0" height="265.0" rx="6" fill="#f3f0ff" stroke="#7048e8" stroke-width="2" />
+<text x="405.0" y="773.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#7048e8" text-anchor="middle" dominant-baseline="auto">LangGraph StateGraph</text>
+<text x="405.0" y="790.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#7048e8" text-anchor="middle" dominant-baseline="auto">(MemorySaver checkpointer)</text>
+<rect x="140.0" y="250.0" width="410.0" height="70.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="345.0" y="254.1" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">API Gateway HTTP API (HTTPS)</text>
+<text x="345.0" y="271.7" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">w527kyboy8.execute-api.us-</text>
+<text x="345.0" y="289.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">east-1.amazonaws.com</text>
+<text x="345.0" y="306.8" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">/webhook/deluxecs  |</text>
+<text x="345.0" y="324.3" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">/webhook/deluxeam</text>
+<rect x="140.0" y="390.0" width="410.0" height="65.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="345.0" y="400.4" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">Application Load Balancer</text>
+<text x="345.0" y="417.9" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">HTTP :80</text>
+<text x="345.0" y="435.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">deluxe-v2-alb-673185558.us-</text>
+<text x="345.0" y="453.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">east-1.elb.amazonaws.com</text>
+<rect x="90.0" y="525.0" width="310.0" height="65.0" rx="6" fill="#d3f9d8" stroke="#2f9e44" stroke-width="1" />
+<text x="245.0" y="553.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">FastAPI + Uvicorn  :8000</text>
+<text x="245.0" y="570.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">Webhook Signature Middleware</text>
+<rect x="830.0" y="825.0" width="255.0" height="60.0" rx="6" fill="#d3f9d8" stroke="#2f9e44" stroke-width="1" />
+<text x="957.5" y="841.7" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">ECS Cron Task</text>
+<text x="957.5" y="859.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">run_job.py  (asyncpg, sin</text>
+<text x="957.5" y="876.8" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">LangGraph)</text>
+<rect x="830.0" y="515.0" width="255.0" height="58.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="957.5" y="548.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">EventBridge Scheduler</text>
+<rect x="1090.0" y="110.0" width="240.0" height="60.0" rx="6" fill="#f1f3f5" stroke="#495057" stroke-width="1" />
+<text x="1210.0" y="135.4" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#495057" text-anchor="middle" dominant-baseline="auto">GitHub Actions</text>
+<text x="1210.0" y="153.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#495057" text-anchor="middle" dominant-baseline="auto">ci.yml / deploy.yml  (OIDC)</text>
+<rect x="1090.0" y="250.0" width="240.0" height="60.0" rx="6" fill="#fff9db" stroke="#e67700" stroke-width="1" />
+<text x="1210.0" y="275.4" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">ECR</text>
+<text x="1210.0" y="293.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e67700" text-anchor="middle" dominant-baseline="auto">Docker Image Registry</text>
+<rect x="540.0" y="955.0" width="215.0" height="65.0" rx="6" fill="#ffe8cc" stroke="#e8590c" stroke-width="1" />
+<text x="647.5" y="974.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e8590c" text-anchor="middle" dominant-baseline="auto">NVIDIA NIM API</text>
+<text x="647.5" y="991.7" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e8590c" text-anchor="middle" dominant-baseline="auto">llama-3.3-70b / mistral-</text>
+<text x="647.5" y="1009.3" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#e8590c" text-anchor="middle" dominant-baseline="auto">large</text>
+<rect x="70.0" y="955.0" width="205.0" height="65.0" rx="6" fill="#fff3bf" stroke="#c78f00" stroke-width="1" />
+<text x="172.5" y="983.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#c78f00" text-anchor="middle" dominant-baseline="auto">Upstash Redis</text>
+<text x="172.5" y="1000.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#c78f00" text-anchor="middle" dominant-baseline="auto">Sesiones / Idempotency</text>
+<rect x="305.0" y="955.0" width="205.0" height="65.0" rx="6" fill="#fff3bf" stroke="#c78f00" stroke-width="1" />
+<text x="407.5" y="983.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#c78f00" text-anchor="middle" dominant-baseline="auto">RDS PostgreSQL 16</text>
+<text x="407.5" y="1000.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#c78f00" text-anchor="middle" dominant-baseline="auto">deluxe-v2-postgres  :5432</text>
+<rect x="845.0" y="643.0" width="220.0" height="52.0" rx="6" fill="#d3f9d8" stroke="#2f9e44" stroke-width="1" />
+<text x="955.0" y="664.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">finalizar_eventos_expirados</text>
+<text x="955.0" y="682.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">rate(5 min)</text>
+<rect x="845.0" y="710.0" width="220.0" height="52.0" rx="6" fill="#d3f9d8" stroke="#2f9e44" stroke-width="1" />
+<text x="955.0" y="731.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">liberar_mesas_expiradas</text>
+<text x="955.0" y="749.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#2f9e44" text-anchor="middle" dominant-baseline="auto">rate(10 min)</text>
+<rect x="150.0" y="110.0" width="165.0" height="60.0" rx="6" fill="#e7f5ff" stroke="#1971c2" stroke-width="1" />
+<text x="232.5" y="144.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#1971c2" text-anchor="middle" dominant-baseline="auto">Bot CS (deluxecs)</text>
+<rect x="375.0" y="110.0" width="165.0" height="60.0" rx="6" fill="#e7f5ff" stroke="#1971c2" stroke-width="1" />
+<text x="457.5" y="144.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#1971c2" text-anchor="middle" dominant-baseline="auto">Bot AM (deluxeam)</text>
+<rect x="100.0" y="683.0" width="135.0" height="55.0" rx="6" fill="#e5dbff" stroke="#7048e8" stroke-width="1" />
+<text x="167.5" y="706.0" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#7048e8" text-anchor="middle" dominant-baseline="auto">Router</text>
+<text x="167.5" y="723.5" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#7048e8" text-anchor="middle" dominant-baseline="auto">(0ms LLM)</text>
+<rect x="275.0" y="668.0" width="125.0" height="42.0" rx="6" fill="#e5dbff" stroke="#7048e8" stroke-width="1" />
+<text x="337.5" y="693.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#7048e8" text-anchor="middle" dominant-baseline="auto">event_agent</text>
+<rect x="275.0" y="722.0" width="125.0" height="42.0" rx="6" fill="#e5dbff" stroke="#7048e8" stroke-width="1" />
+<text x="337.5" y="747.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#7048e8" text-anchor="middle" dominant-baseline="auto">reservation_agent</text>
+<rect x="415.0" y="668.0" width="125.0" height="42.0" rx="6" fill="#e5dbff" stroke="#7048e8" stroke-width="1" />
+<text x="477.5" y="693.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#7048e8" text-anchor="middle" dominant-baseline="auto">ticket_agent</text>
+<rect x="415.0" y="722.0" width="125.0" height="42.0" rx="6" fill="#e5dbff" stroke="#7048e8" stroke-width="1" />
+<text x="477.5" y="747.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#7048e8" text-anchor="middle" dominant-baseline="auto">payment_agent</text>
+<rect x="555.0" y="683.0" width="125.0" height="42.0" rx="6" fill="#e5dbff" stroke="#7048e8" stroke-width="1" />
+<text x="617.5" y="708.2" font-family="system-ui, -apple-system, sans-serif" font-size="13px" fill="#7048e8" text-anchor="middle" dominant-baseline="auto">admin_agent</text>
+<text x="590.0" y="40.0" font-family="system-ui, -apple-system, sans-serif" font-size="22px" fill="#212529">Arquitectura de Aplicación — Deluxe v2</text>
+<text x="275.0" y="779.0" font-family="system-ui, -apple-system, sans-serif" font-size="12px" fill="#7048e8">tools: asyncpg · Redis · Telegram API · NVIDIA NIM</text>
+<text x="845.0" y="487.0" font-family="system-ui, -apple-system, sans-serif" font-size="14px" fill="#495057">Cron Jobs (EventBridge Scheduler)</text>
+<text x="1120.0" y="87.0" font-family="system-ui, -apple-system, sans-serif" font-size="14px" fill="#495057">CI / CD</text>
+<text x="1094.0" y="327.0" font-family="system-ui, -apple-system, sans-serif" font-size="11px" fill="#868e96">push a main → CI → ECR → ECS rolling update</text>
+<line x1="232.0" y1="170.0" x2="345.0" y2="250.0" stroke="#1971c2" stroke-width="1.5" /><polygon points="345.0,250.0 334.8,247.1 338.9,241.4" fill="#1971c2" />
+<line x1="457.0" y1="170.0" x2="345.0" y2="250.0" stroke="#1971c2" stroke-width="1.5" /><polygon points="345.0,250.0 351.1,241.3 355.2,247.0" fill="#1971c2" />
+<line x1="345.0" y1="320.0" x2="345.0" y2="390.0" stroke="#e67700" stroke-width="1.5" /><polygon points="345.0,390.0 341.5,380.0 348.5,380.0" fill="#e67700" />
+<line x1="345.0" y1="455.0" x2="240.0" y2="525.0" stroke="#e67700" stroke-width="1.5" /><polygon points="240.0,525.0 246.4,516.5 250.3,522.4" fill="#e67700" />
+<line x1="245.0" y1="590.0" x2="400.0" y2="645.0" stroke="#2f9e44" stroke-width="1.5" /><polygon points="400.0,645.0 389.4,645.0 391.7,638.4" fill="#2f9e44" />
+<line x1="235.0" y1="710.0" x2="275.0" y2="710.0" stroke="#7048e8" stroke-width="1.5" /><polygon points="275.0,710.0 265.0,713.5 265.0,706.5" fill="#7048e8" />
+<line x1="173.0" y1="910.0" x2="173.0" y2="955.0" stroke="#c78f00" stroke-width="1.5" /><polygon points="173.0,955.0 169.5,945.0 176.5,945.0" fill="#c78f00" />
+<line x1="408.0" y1="910.0" x2="408.0" y2="955.0" stroke="#c78f00" stroke-width="1.5" /><polygon points="408.0,955.0 404.5,945.0 411.5,945.0" fill="#c78f00" />
+<line x1="643.0" y1="910.0" x2="643.0" y2="955.0" stroke="#e8590c" stroke-width="1.5" /><polygon points="643.0,955.0 639.5,945.0 646.5,945.0" fill="#e8590c" />
+<line x1="940.0" y1="573.0" x2="940.0" y2="643.0" stroke="#e67700" stroke-width="1.5" /><polygon points="940.0,643.0 936.5,633.0 943.5,633.0" fill="#e67700" />
+<line x1="975.0" y1="573.0" x2="975.0" y2="710.0" stroke="#e67700" stroke-width="1.5" /><polygon points="975.0,710.0 971.5,700.0 978.5,700.0" fill="#e67700" />
+<line x1="957.0" y1="762.0" x2="957.0" y2="825.0" stroke="#2f9e44" stroke-width="1.5" /><polygon points="957.0,825.0 953.5,815.0 960.5,815.0" fill="#2f9e44" />
+<line x1="830.0" y1="855.0" x2="407.0" y2="922.0" stroke="#2f9e44" stroke-width="1.5" /><polygon points="407.0,922.0 416.3,917.0 417.4,923.9" fill="#2f9e44" />
+<line x1="1210.0" y1="170.0" x2="1210.0" y2="250.0" stroke="#495057" stroke-width="1.5" /><polygon points="1210.0,250.0 1206.5,240.0 1213.5,240.0" fill="#495057" />
+<line x1="1090.0" y1="280.0" x2="770.0" y2="710.0" stroke="#495057" stroke-width="1.5" /><polygon points="770.0,710.0 773.2,699.9 778.8,704.1" fill="#495057" />
+</svg>
