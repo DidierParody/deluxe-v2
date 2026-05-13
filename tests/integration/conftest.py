@@ -10,6 +10,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
 import pytest
+import telegram
 from httpx import ASGITransport
 
 FAKE_ENV = {
@@ -55,10 +56,9 @@ async def client():
         patch("app.agents.graph.compile_graph", return_value=MagicMock()),
         patch.object(bot_cs_app, "initialize", new_callable=AsyncMock),
         patch.object(bot_cs_app, "shutdown", new_callable=AsyncMock),
-        patch.object(bot_cs_app.bot, "set_webhook", new_callable=AsyncMock),
+        patch.object(telegram.Bot, "set_webhook", new_callable=AsyncMock),
         patch.object(bot_am_app, "initialize", new_callable=AsyncMock),
         patch.object(bot_am_app, "shutdown", new_callable=AsyncMock),
-        patch.object(bot_am_app.bot, "set_webhook", new_callable=AsyncMock),
     ):
         transport = ASGITransport(app=app)
         async with httpx.AsyncClient(transport=transport, base_url="http://test") as ac:
