@@ -4,8 +4,6 @@ Integration tests for health and webhook endpoints.
 
 from unittest.mock import AsyncMock, patch
 
-import pytest
-
 from tests.integration.conftest import bot_cs_app
 
 VALID_UPDATE = {
@@ -29,7 +27,7 @@ async def test_health_returns_ok(client):
 
 async def test_health_redis_not_configured(client):
     response = await client.get("/health")
-    assert response.json()["redis_configured"] == False
+    assert not response.json()["redis_configured"]
 
 
 async def test_webhook_requires_valid_signature(client):
